@@ -32,6 +32,8 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	 */
 	private static final long serialVersionUID = 2211479314105403140L;
 	private ArrayList<MouseListener> mouseListeners=new ArrayList<MouseListener>();
+	private ArrayList<MouseMotionListener> mouseMotionListener=new ArrayList<MouseMotionListener>();
+	private ArrayList<KeyListener> keyListeners=new ArrayList<KeyListener>();
 	private ArrayList<InternalFrame> frames=new ArrayList<InternalFrame>();
 	MessagePane messagePane= new MessagePane(0,0,250,200,10);
 	int width;
@@ -41,6 +43,8 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		super();
 		super.addMouseListener(this);
 		super.addMouseMotionListener(this);
+		super.addKeyListener(this);
+		
 		this.width=width;
 		this.height=height;
 		glassPane=this.createClearVolatileImage(width, height);
@@ -51,6 +55,7 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		messagePane.addMessage(""+1);
 		messagePane.addMessage(""+2);
 		messagePane.addMessage(""+3);
+		this.addKeyListener(messagePane);
 	}
 	VolatileImage image;
 	VolatileImage glassPane;
@@ -80,6 +85,7 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	long lastTime=System.currentTimeMillis()+5000;
 	
 	public void paint(Graphics g){
+		this.requestFocus();
 		if(lastTime/1000<System.currentTimeMillis()/1000){
 			lastTime=System.currentTimeMillis();
 			messagePane.addMessage(""+(lastTime/1000));
@@ -101,6 +107,7 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		
 	}
 	public void update(Graphics g){
+		this.requestFocus();
 		this.paint(g);
 	}
 	public VolatileImage createClearVolatileImage(int width, int height) {
@@ -116,6 +123,12 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	
 	public void addMouseListener(MouseListener ml){
 		this.mouseListeners.add(ml);
+	}
+	public void addMouseMotionListener(MouseMotionListener ml){
+		this.mouseMotionListener.add(ml);
+	}
+	public void addKeyListener(KeyListener k){
+		this.keyListeners.add(k);
 	}
 
 
@@ -197,22 +210,33 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+	public void keyPressed(KeyEvent e) {
+		for(KeyListener k:this.keyListeners){
+			if(!e.isConsumed()){
+				k.keyPressed(e);
+			}
+				
+		}
 		
 	}
 
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+	public void keyReleased(KeyEvent e) {
+		for(KeyListener k:this.keyListeners){
+			if(!e.isConsumed())
+				k.keyReleased(e);
+		}
 		
 	}
 
 
 	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+	public void keyTyped(KeyEvent e) {
+		for(KeyListener k:this.keyListeners){
+			if(!e.isConsumed())
+				k.keyTyped(e);
+		}
 		
 	}
 

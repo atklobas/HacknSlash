@@ -46,10 +46,11 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		JFrame f=new JFrame();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GamePanel canvas=new GamePanel(width,height);
-		f.addKeyListener(this);
+		canvas.addKeyListener(this);
 		f.add(canvas);
 		f.pack();
 		f.setVisible(true);
+		canvas.requestFocus();
 		
 		player.setFaction(new Faction("PLAYER"));
 		player.addAttack("Punch", new Attack(new int[]{0, 10000, 0}, new int[]{200000, 0, 0}, 10, 10));
