@@ -32,7 +32,7 @@ public class Player extends Actor{
 	
 	public void damage(int[] damage){
 		super.damage(damage);
-		System.out.println("Ouch! Player took "+damage[0]+" damage. "+hitpoints+" hp remaining.");
+		Main.Main.out.println("Ouch! Player took "+damage[0]+" damage. "+hitpoints+" hp remaining.");
 	}
 	
 

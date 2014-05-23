@@ -35,7 +35,7 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	private ArrayList<MouseMotionListener> mouseMotionListener=new ArrayList<MouseMotionListener>();
 	private ArrayList<KeyListener> keyListeners=new ArrayList<KeyListener>();
 	private ArrayList<InternalFrame> frames=new ArrayList<InternalFrame>();
-	MessagePane messagePane= new MessagePane(0,0,250,200,10);
+	public MessagePane messagePane= new MessagePane(0,0,250,200,10);
 	int width;
 	int height;
 	AffineTransform id=new AffineTransform();

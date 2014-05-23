@@ -35,7 +35,7 @@ public class MessagePane extends InternalFrame implements KeyListener,Console{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Shell s=new Shell(this);
+		
 	}
 
 	@Override

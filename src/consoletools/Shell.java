@@ -10,6 +10,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class Shell {
 	
 	private HashMap<String,ShellProgram> commands=new HashMap<String,ShellProgram>();
@@ -25,6 +26,9 @@ public class Shell {
     
     private File loc;
     private File home;
+    public Shell(){
+    	this(new DefaultConsole());
+    }
 	public Shell(Console c) {
 		this.c=c;
 		this.out=c.out();
@@ -132,5 +136,38 @@ public class Shell {
 			System.err.println("contained file is not valid! "+e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	private static class DefaultConsole implements Console{
+
+		@Override
+		public PrintStream out() {
+			// TODO Auto-generated method stub
+			return System.out;
+		}
+
+		@Override
+		public InputStream in() {
+			// TODO Auto-generated method stub
+			return System.in;
+		}
+
+		@Override
+		public void addConsoleListener(ConsoleListener cl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void removeConsoleListener(ConsoleListener cl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public PrintStream err() {
+			// TODO Auto-generated method stub
+			return System.err;
+		}
+		
 	}
 }

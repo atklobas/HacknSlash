@@ -4,6 +4,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +18,9 @@ import graphics.GamePanel;
 
 import javax.swing.JFrame;
 
+import consoletools.Shell;
+import consoletools.modify;
+import consoletools.time;
 import mathematics.Vector;
 import mathematics.Vector2D;
 import Map.Wall;
@@ -29,6 +33,10 @@ import actors.Zombie;
 
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
+	public static int delay=20;
+	public static PrintStream out;
+	
+	
 	public static final int width=800;
 	public static final int height=600;
 	int boxWidth=width;
@@ -54,14 +62,18 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		f.pack();
 		f.setVisible(true);
 		canvas.requestFocus();
+		Main.out=canvas.messagePane.out();
+		Shell s=new Shell();
+		
 		
 		factions.put("ENEMY", new Faction("ENEMY"));
 		factions.put("PLAYER", new Faction("PLAYER"));
 		
 		player.setFaction(factions.get("PLAYER"));
 		player.addAttack("Punch", new Attack(new int[]{0, 1000, 0}, new int[]{8000, 0, 0}, 15, 15));
+		s.addCommand("player", new modify(player));
 		
-		
+		s.addCommand("time", new time(this));
 		playerCenter=new Vector2D(width/2,height/2);
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
@@ -85,7 +97,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		
 		drawn.addAll(actors);
 		while(true){
-			Thread.sleep(20);
+			Thread.sleep(delay);
 			if(mouseHeld)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(clickedPoint));
 			for(int i=0; i<actors.size(); i++){
 				if(!actors.get(i).isAlive()){
@@ -97,7 +109,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			
 			for(Actor a:actors){
 
-				a.progress(20);
+				a.progress(delay);
 				
 				for(Actor c:actors){
 					
@@ -214,5 +226,6 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		// TODO Auto-generated method stub
 		
 	}
+	
 
 }
