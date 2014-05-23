@@ -101,6 +101,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 					}
 				}
 			}
+			
 			for(Attack atk=attacks.poll();atk!=null;atk=attacks.poll()){
 
 					for(Actor act:actors){
@@ -109,6 +110,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 				
 			}
 			
+			
+			synchronized(drawn){
 			for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
 				if(!d.next().drawn()){
 					d.remove();
@@ -117,6 +120,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			
 			
 			canvas.draw(drawn, this.getCenterPoint());
+			}
 			f.repaint();
 		}
 	}
@@ -178,10 +182,15 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		if(arg0.getKeyChar()=='a'){
+			
 			Attack test=player.attack("Punch");
 			test.created=System.currentTimeMillis();
-			drawn.add(test);
-			attacks.add(test);
+			synchronized(drawn){
+				drawn.add(test);
+			}
+			synchronized(attacks){
+				attacks.add(test);
+			}
 			
 		}
 		
