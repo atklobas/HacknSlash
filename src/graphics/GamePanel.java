@@ -31,6 +31,7 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	 * 
 	 */
 	private static final long serialVersionUID = 2211479314105403140L;
+	private ArrayList<MouseListener> mouseListeners=new ArrayList<MouseListener>();
 	private ArrayList<InternalFrame> frames=new ArrayList<InternalFrame>();
 	MessagePane messagePane= new MessagePane(0,0,250,200,10);
 	int width;
@@ -38,6 +39,8 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	AffineTransform id=new AffineTransform();
 	public GamePanel(int width,int height){
 		super();
+		super.addMouseListener(this);
+		super.addMouseMotionListener(this);
 		this.width=width;
 		this.height=height;
 		glassPane=this.createClearVolatileImage(width, height);
@@ -88,7 +91,8 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 			if(image!=null){
 				
 			Graphics toSend=image.createGraphics();
-			toSend.setClip(f.getX(), f.getY(), f.getWidth(), f.getHeight());
+			toSend.translate(f.getX(), f.getY());
+			toSend.setClip(0, 0, f.getWidth(), f.getHeight());
 			f.paint(toSend);
 			}
 		}
@@ -108,6 +112,10 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		    g.fillRect(0, 0, ret.getWidth(), ret.getHeight());
 		    g.dispose();
 		return ret;
+	}
+	
+	public void addMouseListener(MouseListener ml){
+		this.mouseListeners.add(ml);
 	}
 
 
@@ -130,18 +138,60 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	boolean resize=false;
+	private InternalFrame selected=null;
+	private int selectX=-1, selectY=-1;
+	private int selectWidth, selectHeight;
+	private void modifyFrame(int x, int y){
+		if(selected!=null){
+			if(resize){
+				
+				selected.resizeTo(x-selected.getX()+selectWidth-selectX, y-selected.getY()+selectHeight-selectY);
+			}else{
+				selected.moveTo(x-selectX, y-selectY);
+				
+			}
+		}
+	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mousePressed(MouseEvent e) {
+		for(InternalFrame f:frames){
+			int contained=f.contains(e.getX(),e.getY());
+			if(contained>0){
+				if((contained&(InternalFrame.BOTTOM_PADDING|InternalFrame.RIGHT_PADDING))!=0){
+					resize=true;
+					selectWidth=f.getWidth();
+					selectHeight=f.getHeight();
+				}else{
+					resize=false;
+				}
+				selected=f;
+				selectX=e.getX()-f.getX();
+				selectY=e.getY()-f.getY();
+				e.consume();
+			}
+		}
+		if(!e.isConsumed()){
+			for(MouseListener ml:this.mouseListeners){
+				ml.mousePressed(e);
+			}
+		}
 		
 	}
 
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseReleased(MouseEvent e) {
+		this.modifyFrame(e.getX(), e.getY());
+		selected=null;
+		selectX=-1;
+		selectY=-1;
+		
+		for(MouseListener ml:this.mouseListeners){
+			ml.mouseReleased(e);
+		}
 		
 	}
 
@@ -168,8 +218,8 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseDragged(MouseEvent e) {
+		this.modifyFrame(e.getX(), e.getY());
 		
 	}
 
