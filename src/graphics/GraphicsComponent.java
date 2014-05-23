@@ -9,4 +9,9 @@ public interface GraphicsComponent {
 	public int getWidth();
 	public int getHeight();
 	public void paint(Graphics g);
+	public boolean isMovable();
+	public void moveTo(int x, int y);
+	public boolean isResizable();
+	public void resizeTo(int widht,int height);
+	
 }

@@ -12,13 +12,13 @@ public class MessagePane extends InternalFrame{
 	DecayingLinkedList<String> messages= new DecayingLinkedList<String>();
 
 	public MessagePane(int x, int y, int width, int height,int lines) {
-		super(x, y, width, height);
+		super(x+10, y+10, width, height);
 		this.lines=lines;
 	}
 
 	@Override
 	public void paint(Graphics g) {
-		
+		super.paint(g);
 		int max=Math.min(lines, messages.size());
 		int index=0;
 		g.setColor(new Color(0,0,0,255/8));
