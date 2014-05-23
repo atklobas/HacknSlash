@@ -82,11 +82,11 @@ public abstract class InternalFrame implements GraphicsComponent{
 		
 	}
 
-	private int getPaddingBottom() {
+	public int getPaddingBottom() {
 		return paddingBottom;
 	}
 
-	private void setPaddingBottom(int paddingBottom) {
+	public void setPaddingBottom(int paddingBottom) {
 		this.paddingBottom = paddingBottom;
 	}
 
@@ -112,6 +112,9 @@ public abstract class InternalFrame implements GraphicsComponent{
 
 	public void setPaddingLeft(int paddingLeft) {
 		this.paddingLeft = paddingLeft;
+	}
+	protected int avaliableHeight() {
+		return this.height-this.paddingBottom-this.paddingTop;
 	}
 
 

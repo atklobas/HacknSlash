@@ -49,10 +49,11 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		JFrame f=new JFrame();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GamePanel canvas=new GamePanel(width,height);
-		f.addKeyListener(this);
+		canvas.addKeyListener(this);
 		f.add(canvas);
 		f.pack();
 		f.setVisible(true);
+		canvas.requestFocus();
 		
 		factions.put("ENEMY", new Faction("ENEMY"));
 		factions.put("PLAYER", new Faction("PLAYER"));
@@ -108,6 +109,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 					}
 				}
 			}
+			
 			for(Attack atk=attacks.poll();atk!=null;atk=attacks.poll()){
 
 					for(Actor act:actors){
@@ -115,14 +117,13 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 					}
 				
 			}
+
 			synchronized(drawn){
 				for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
 					if(!d.next().drawn()){
 						d.remove();
 					}
 				}
-				
-				
 				canvas.draw(drawn, this.getCenterPoint());
 				f.repaint();
 			}
@@ -197,6 +198,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		// TODO Auto-generated method stub
 		if(arg0.getKeyChar()=='a'){
 			addAttack(player.attack("Punch"));
+
 		}
 		
 	}
