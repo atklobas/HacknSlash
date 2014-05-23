@@ -10,6 +10,9 @@ import java.util.Iterator;
 		public int size(){
 			return count;
 		}
+		public void setDefaultDelay(int delay){
+			this.defaultDelay=delay;
+		}
 		public DecayingLinkedList(int defaultDelay){
 			this.defaultDelay=defaultDelay;
 			this.head=null;
@@ -69,8 +72,10 @@ import java.util.Iterator;
 						}else{
 							list.count--;
 							current.previous.next=current.next;
+							if(current.next!=null)current.next.previous=current.previous;
 						}
 						current=current.next;
+						
 						return hasNext();
 					}
 					return true;

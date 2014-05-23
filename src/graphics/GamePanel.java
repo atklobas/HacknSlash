@@ -82,15 +82,9 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		}
 	}
 	
-	long lastTime=System.currentTimeMillis()+5000;
 	
 	public void paint(Graphics g){
 		this.requestFocus();
-		if(lastTime/1000<System.currentTimeMillis()/1000){
-			lastTime=System.currentTimeMillis();
-			messagePane.addMessage(""+(lastTime/1000));
-			
-		}
 		
 		
 		for(InternalFrame f:frames){
@@ -244,6 +238,12 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		this.modifyFrame(e.getX(), e.getY());
+		if(this.selected!=null)e.consume();
+		if(!e.isConsumed()){
+			for(MouseMotionListener ml:this.mouseMotionListener){
+				ml.mouseDragged(e);
+			}
+		}
 		
 	}
 
