@@ -58,7 +58,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		factions.put("PLAYER", new Faction("PLAYER"));
 		
 		player.setFaction(factions.get("PLAYER"));
-		player.addAttack("Punch", new Attack(new int[]{0, 10000, 0}, new int[]{200000, 0, 0}, 10, 10));
+		player.addAttack("Punch", new Attack(new int[]{0, 1000, 0}, new int[]{8000, 0, 0}, 15, 15));
 		
 		
 		playerCenter=new Vector2D(width/2,height/2);
@@ -115,23 +115,27 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 					}
 				
 			}
-			
-			for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
-				if(!d.next().drawn()){
-					d.remove();
+			synchronized(drawn){
+				for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
+					if(!d.next().drawn()){
+						d.remove();
+					}
 				}
+				
+				
+				canvas.draw(drawn, this.getCenterPoint());
+				f.repaint();
 			}
-			
-			
-			canvas.draw(drawn, this.getCenterPoint());
-			f.repaint();
 		}
 	}
 	
 	
 	public static void addAttack(Attack a){
 		a.created=System.currentTimeMillis();
-		drawn.add(a);
+		
+		synchronized(drawn){
+			drawn.add(a);
+		}
 		attacks.add(a);
 	}
 	
