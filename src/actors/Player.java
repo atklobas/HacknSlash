@@ -32,7 +32,7 @@ public class Player extends Actor{
 	
 
 	@Override
-	public void progress(double time) {
+	public void progress(int time) {
 		super.progress(time);
 		if(this.getSetPoint().subtract(this.getPos()).getLength()<2){
 			this.setSetPoint(this.getPos());

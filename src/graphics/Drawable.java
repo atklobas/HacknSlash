@@ -13,5 +13,6 @@ public interface Drawable {
 	public int getHeight();
 	public Color getColor();
 	public void draw(Graphics2D g);
+	public boolean drawn();
 
 }

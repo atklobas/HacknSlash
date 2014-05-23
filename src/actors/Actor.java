@@ -1,8 +1,10 @@
 package actors;
 
 import java.awt.Graphics2D;
+import java.util.HashMap;
 import java.util.Random;
 
+import Main.Map;
 import mathematics.Vector;
 import mathematics.Vector2D;
 import graphics.Drawable;
@@ -12,7 +14,25 @@ public abstract class Actor implements Drawable{
 	double p=.3;
 	double i=.1;
 	double d=.1;
-	double integralMax=maxSpeed*20;
+	double integralMax=maxSpeed*20*1000;
+	int hitpoints = 100000;
+	int hpregen = 1;
+	int manapoints = 100000;
+	int manaregen = 3;
+	int staminapoints = 100000;
+	int staminaregen = 5;
+	HashMap<String, Attack> attacks = new HashMap<String, Attack>();
+	public static Random rand=new Random();
+	private Vector2D setPoint;
+	
+	private Faction faction;
+	
+	
+	
+	
+	private Vector2D pos;
+	Vector2D facing;
+	
 	Vector2D tally=new Vector2D();
 	Vector2D previous=new Vector2D();
 	public void setPid(double p, double i, double d){
@@ -21,8 +41,34 @@ public abstract class Actor implements Drawable{
 		this.d=d;
 	}
 	
-	public static Random rand=new Random();
-	private Vector2D setPoint;
+	
+	public void damage(int[] damage){
+		hitpoints -= damage[0]; manapoints -= damage[1]; staminapoints -= damage[2];
+		System.out.println("Ouch! I took "+(damage[0])+" damage!  "+hitpoints+" hp remaining");
+	}
+	
+	
+	public boolean isAlive(){
+		return hitpoints>0;
+	}
+	
+	public Faction getFaction(){
+		return faction;
+	}
+	public void setFaction(Faction f){
+		faction = f;
+	}
+	
+	
+	public Attack attack(String attackName){
+		Attack a = attacks.get(attackName);
+		a.setPos(pos.add(facing.scale(a.distance)));
+		return a;
+	}
+	public void addAttack(String attackName, Attack attack){
+		attack.setFaction(faction);
+		this.attacks.put(attackName, attack);
+	}
 	
 	public Actor(Vector2D pos){
 		this.pos=pos;
@@ -38,7 +84,11 @@ public abstract class Actor implements Drawable{
 		return this.setPoint;
 	}
 	
-	private Vector2D pos;
+	public boolean drawn(){
+		return isAlive();
+	}
+	
+	
 	
 	public Vector2D getPos(){
 		return this.pos;
@@ -46,8 +96,17 @@ public abstract class Actor implements Drawable{
 	public void translate(Vector2D trans){
 		this.pos=this.pos.add(trans);
 	}
-	public void progress(double time){
+	public void progress(int time){
+		hitpoints += hpregen*time;
+		manapoints += manaregen*time;
+		staminapoints += staminaregen*time;
+		
+	
+		
 		Vector2D proportion=setPoint.subtract(pos);
+		if(!proportion.equals(Vector2D.ZERO)){
+			this.facing = proportion.scale(1.0/proportion.getLength());
+		}
 		this.tally=this.tally.add(proportion.scale(time));
 		double intLength=tally.getLength();
 		
@@ -67,7 +126,7 @@ public abstract class Actor implements Drawable{
 		double length=dir.getLength();
 		
 		if(length>maxSpeed){
-			dir=dir.scale(maxSpeed/length);
+			dir=dir.scale(maxSpeed/(length));
 		}
 		this.translate(dir);
 		/*if(length==0){
@@ -100,4 +159,5 @@ public abstract class Actor implements Drawable{
 		}
 		
 	}
+
 }

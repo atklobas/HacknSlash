@@ -58,5 +58,10 @@ public class Wall implements Drawable{
 		}
 		
 	}
+	@Override
+	public boolean drawn() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 }

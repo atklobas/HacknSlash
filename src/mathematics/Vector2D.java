@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Vector2D extends Vector {
+	public static final Vector2D ZERO = new Vector2D();
+	
 	public Vector2D(){
 		super(2);
 	}

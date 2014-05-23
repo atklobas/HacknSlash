@@ -7,11 +7,21 @@ import mathematics.Vector;
 import mathematics.Vector2D;
 
 public class NPC extends Actor{
+	
+	private Faction faction;
 
 	public NPC(Vector2D pos) {
 		super(pos);
 		this.setSpeed(2.);
 		this.setPid(.2, .5, .1);
+	}
+	
+	
+	public Faction getFaction(){
+		return faction;
+	}
+	public void setFaction(Faction f){
+		faction = f;
 	}
 
 	public int getWidth() {
@@ -31,7 +41,7 @@ public class NPC extends Actor{
 	}
 	int progressionCounter;
 	@Override
-	public void progress(double time) {
+	public void progress(int time) {
 		progressionCounter++;
 		if(progressionCounter%8==0){
 			//this.setSetPoint(this.getPos().add(new Vector2D(rand.nextInt(100)-50,rand.nextInt(100)-50)));
