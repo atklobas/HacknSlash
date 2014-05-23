@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import actors.Attack;
 import actors.Faction;
 import actors.NPC;
 import actors.Player;
+import actors.Zombie;
 
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
@@ -31,16 +33,17 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public static final int height=600;
 	int boxWidth=width;
 	int boxHeight=height;
-	LinkedList<graphics.Drawable> drawn=new LinkedList<graphics.Drawable>();
+	static LinkedList<graphics.Drawable> drawn=new LinkedList<graphics.Drawable>();
 	Vector2D playerCenter;
 	public static Player player=new Player(50,50);
 	Random rand=new Random();
 	ArrayList<Wall> walls=new ArrayList<Wall>();
 	ArrayList<Actor> actors=new ArrayList<Actor>();
-	LinkedList<Attack> attacks = new LinkedList<Attack>();
+	static LinkedList<Attack> attacks = new LinkedList<Attack>();
 	private Vector2D getCenterPoint(){
 		return player.getPos().add(new Vector2D(player.getWidth()/2,player.getHeight()/2));
 	}
+	public static HashMap<String, Faction> factions = new HashMap<String, Faction>();
 	
 	public Main() throws InterruptedException{
 		JFrame f=new JFrame();
@@ -51,7 +54,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		f.pack();
 		f.setVisible(true);
 		
-		player.setFaction(new Faction("PLAYER"));
+		factions.put("ENEMY", new Faction("ENEMY"));
+		factions.put("PLAYER", new Faction("PLAYER"));
+		
+		player.setFaction(factions.get("PLAYER"));
 		player.addAttack("Punch", new Attack(new int[]{0, 10000, 0}, new int[]{200000, 0, 0}, 10, 10));
 		
 		
@@ -69,9 +75,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		actors.add(player);
 		
 		Faction enemyFaction = new Faction("ENEMY");
+		
 		for(int i=0;i<40;i++){
-			NPC generated=new NPC(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
-			generated.setFaction(enemyFaction);
+			NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
+			//System.out.println("new "+generated.getFaction()+" created.");
 			actors.add(generated);
 		}
 		
@@ -119,6 +126,13 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			canvas.draw(drawn, this.getCenterPoint());
 			f.repaint();
 		}
+	}
+	
+	
+	public static void addAttack(Attack a){
+		a.created=System.currentTimeMillis();
+		drawn.add(a);
+		attacks.add(a);
 	}
 	
 	
@@ -178,11 +192,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		if(arg0.getKeyChar()=='a'){
-			Attack test=player.attack("Punch");
-			test.created=System.currentTimeMillis();
-			drawn.add(test);
-			attacks.add(test);
-			
+			addAttack(player.attack("Punch"));
 		}
 		
 	}
