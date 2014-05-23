@@ -47,6 +47,7 @@ public class Attack implements Drawable{
 	}
 	
 	public void collide(Actor c) {
+		//System.out.println(faction+" attacking "+c.getFaction());
 		if(!faction.equals(c.getFaction())){
 			Vector2D toMove=c.getPos().subtract(this.pos);
 			double length=toMove.getLength();

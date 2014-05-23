@@ -30,6 +30,11 @@ public class Player extends Actor{
 		return Color.BLACK;
 	}
 	
+	public void damage(int[] damage){
+		super.damage(damage);
+		System.out.println("Ouch! Player took "+damage[0]+" damage. "+hitpoints+" hp remaining.");
+	}
+	
 
 	@Override
 	public void progress(int time) {

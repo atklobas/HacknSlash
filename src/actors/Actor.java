@@ -44,7 +44,6 @@ public abstract class Actor implements Drawable{
 	
 	public void damage(int[] damage){
 		hitpoints -= damage[0]; manapoints -= damage[1]; staminapoints -= damage[2];
-		System.out.println("Ouch! I took "+(damage[0])+" damage!  "+hitpoints+" hp remaining");
 	}
 	
 	
@@ -66,7 +65,7 @@ public abstract class Actor implements Drawable{
 		return a;
 	}
 	public void addAttack(String attackName, Attack attack){
-		attack.setFaction(faction);
+		attack.setFaction(getFaction());
 		this.attacks.put(attackName, attack);
 	}
 	
