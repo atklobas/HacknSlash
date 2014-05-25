@@ -257,8 +257,12 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseMoved(MouseEvent e) {
+		if(!e.isConsumed()){
+			for(MouseMotionListener ml:this.mouseMotionListener){
+				ml.mouseDragged(e);
+			}
+		}
 		
 	}
 }

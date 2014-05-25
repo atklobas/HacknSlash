@@ -113,10 +113,13 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		t=new Timer(delay, this);
 		t.start();
 	}
+	public Vector2D getRelative(Vector2D reg){
+		return this.getCenterPoint().subtract(playerCenter).add(reg);
+	}
 	private void progress(){
 		if(mouseHeld&&mouseButton==1)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(mouseLocation));
 		if(mouseHeld&&mouseButton==3){
-			this.addAttack(player.getAttack(Player.hotKeys.SECONDARY, this.getCenterPoint().subtract(playerCenter).add(new Vector2D(mouseLocation))));
+			this.addAttack(player.getAttack(Player.hotKeys.SECONDARY, getRelative(new Vector2D(mouseLocation))));
 			
 		}
 		for(int i=0; i<actors.size(); i++){
@@ -215,8 +218,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		
 	}
 	boolean mouseHeld=false;
-	Vector2D clickedPoint;
-	Vector2D mouseLocation;
+	Vector2D clickedPoint=new Vector2D();
+	Vector2D mouseLocation=new Vector2D();
 	int mouseButton;
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -246,18 +249,32 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseMoved(MouseEvent e) {
+		mouseLocation=new Vector2D(e.getX(),e.getY());
 		
 	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		/*if(arg0.getKeyChar()=='a'){
-			addAttack(player.attack("Punch"));
-
-		}*/
+	public void keyPressed(KeyEvent e) {
+		switch(e.getKeyCode()){
+		case KeyEvent.VK_Q:
+			this.addAttack(player.getAttack(Player.hotKeys.Q, getRelative(new Vector2D(mouseLocation))));
+			break;
+		case KeyEvent.VK_W:
+			break;
+		case KeyEvent.VK_E:
+			break;
+		case KeyEvent.VK_R:
+			break;
+		case KeyEvent.VK_1:
+			break;
+		case KeyEvent.VK_2:
+			break;
+		case KeyEvent.VK_3:
+			break;
+		case KeyEvent.VK_4:
+			break;
+		}
 		
 	}
 

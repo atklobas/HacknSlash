@@ -96,6 +96,7 @@ public abstract class Actor implements Drawable{
 		return this.pos;
 	}
 	public void translate(Vector2D trans){
+		if(trans.getX()<9999)
 		this.pos=this.pos.add(trans);
 	}
 	public void progress(int time){

@@ -21,5 +21,8 @@ public abstract class Weapon {
 	public void resetCoolDown(){
 		this.cooldownTimer=cooldown;
 	}
+	public void setCooldown(int time){
+		this.cooldown=time;
+	}
 
 }

@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 
 import attacks.Attack;
 import attacks.Bow;
+import attacks.Sword;
 import attacks.Weapon;
 import mathematics.Vector;
 import mathematics.Vector2D;
@@ -16,18 +17,33 @@ public class Player extends Actor{
 		Q,W,E,R,ONE,TWO,THREE,FOUR,PRIMARY,SECONDARY
 	}
 	Weapon bow=new Bow();
-	
+	Weapon sword= new Sword();
 	public Player(int x, int y){
 		super(new Vector2D(x,y));
 		this.setSpeed(10.);
 		this.setPid(.5, .00, .1);
 		
 	}
+	
+	
+	public Attack getAttack(hotKeys k, Actor target, Vector2D loc){
+		switch(k){
+		case SECONDARY:
+			return bow.createAttack(bow.getAttacks()[0], this, target, loc);
+		case Q:
+			return sword.createAttack("slash", this, target, loc);
+		default:
+			return null;
+		
+		
+		}
+	}
+	
 	public Attack getAttack(hotKeys k, Actor target){
-		return bow.createAttack(bow.getAttacks()[0], this, target, target.getPos());
+		return getAttack(k,target,null);
 	}
 	public Attack getAttack(hotKeys k, Vector2D target){
-		return bow.createAttack(bow.getAttacks()[0], this, null, target);
+		return getAttack(k,null,target);
 	}
 	
 	public int getWidth() {
@@ -57,6 +73,7 @@ public class Player extends Actor{
 			this.setSetPoint(this.getPos());
 		}
 		bow.progress(time);
+		sword.progress(time);
 		
 	}
 	public void draw(Graphics2D g) {
