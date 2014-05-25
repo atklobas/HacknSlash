@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 
-public class AnimatedSprite implements SpriteSheet{
+public class AnimatedSprite{
 
 	private HashMap<String, Animation> animations;
 	private Animation currentAnimation;
@@ -21,12 +21,12 @@ public class AnimatedSprite implements SpriteSheet{
 		return animations.keySet();
 	}
 	
-	public void addAnimation(String name, LinkedList<BufferedImage> images, int animationTime){
+	public void addAnimation(String name, LinkedList<Sprite> images, int animationTime){
 		animations.put(name, new Animation(images, animationTime));
 	}
 	
 	
-	public BufferedImage getImage(){
+	public Sprite getImage(){
 		return currentAnimation.getImage();
 	}
 	
@@ -57,16 +57,16 @@ public class AnimatedSprite implements SpriteSheet{
 		Frame currentFrame;
 		Iterator<Frame> itr;
 		
-		public Animation(LinkedList<BufferedImage> images, int animationTime){
+		public Animation(LinkedList<Sprite> images, int animationTime){
 			makeFrames(images);
 			this.animationTime=animationTime;
 			size=images.size();
 			
 		}
 		
-		public void makeFrames(LinkedList<BufferedImage> images){
+		public void makeFrames(LinkedList<Sprite> images){
 			int frameTime = animationTime/size;
-			for(BufferedImage i:images){
+			for(Sprite i:images){
 				frames.add(new Frame(i, frameTime));
 			}
 			itr = frames.iterator();
@@ -87,49 +87,25 @@ public class AnimatedSprite implements SpriteSheet{
 			currentTime=0;
 			itr=frames.iterator();
 		}
-		public BufferedImage getImage(){
+		public Sprite getImage(){
 			return currentFrame.getImage();
 		}
 		
 		
 		private class Frame{
-			BufferedImage image;
+			Sprite image;
 			public int time;
-			public Frame(BufferedImage image, int time){
+			public Frame(Sprite image, int time){
 				this.image=image;
 				this.time=time;
 			}
-			public BufferedImage getImage(){
+			public Sprite getImage(){
 				return image;
 			}
 			public int progress(int time){
 				return time-this.time;
 			}
 		}
-	}
-
-
-
-
-	@Override
-	public BufferedImage currentSprite() {
-		return this.getImage();
-	}
-
-	@Override
-	public void advance() {
-		this.advance(currentAnimation.animationTime/currentAnimation.size);
-	}
-
-	@Override
-	public void advance(double time) {
-		this.progress((int)time);
-	}
-
-	@Override
-	public void updateHealth(int health) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
