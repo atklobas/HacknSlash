@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 
 import attacks.Attack;
 import attacks.Bow;
+import attacks.SpellBook;
 import attacks.Sword;
 import attacks.Weapon;
 import mathematics.Vector;
@@ -18,6 +19,7 @@ public class Player extends Actor{
 	}
 	Weapon bow=new Bow();
 	Weapon sword= new Sword();
+	Weapon spellBook=new SpellBook();
 	public Player(int x, int y){
 		super(new Vector2D(x,y));
 		this.setSpeed(10.);
@@ -32,6 +34,8 @@ public class Player extends Actor{
 			return bow.createAttack(bow.getAttacks()[0], this, target, loc);
 		case Q:
 			return sword.createAttack("slash", this, target, loc);
+		case W:
+			return spellBook.createAttack("fireball", this, target, loc);
 		default:
 			return null;
 		

@@ -15,6 +15,7 @@ public abstract class ProjectileAttack extends Attack{
 	double speed;
 	private SortedLinkedList<Actor> hitList=new SortedLinkedList<Actor>();
 	
+	
 	public ProjectileAttack(Actor creator, Vector2D target, double speed) {
 		super(creator, null, creator.getPos());
 		this.speed=speed;

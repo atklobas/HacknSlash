@@ -52,6 +52,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 	ArrayList<Wall> walls=new ArrayList<Wall>();
 	static ArrayList<Actor> actors=new ArrayList<Actor>();
 	static LinkedList<Attack> attacks = new LinkedList<Attack>();
+	ArrayList<Attack> attackToAdd=new ArrayList<Attack>();
 	GamePanel canvas;
 	JFrame f;
 	
@@ -145,15 +146,19 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 			}
 		}
 		
-		for(Iterator<Attack> itr=attacks.iterator();itr.hasNext();){
-			Attack a=itr.next();
-			if(a.drawn()){
-				a.progress(delay);
-			}else{
-				itr.remove();
+			if(attackToAdd.size()!=0){
+				attacks.addAll(attackToAdd);
+				attackToAdd.clear();
 			}
-			
-		}
+			for(Iterator<Attack> itr=attacks.iterator();itr.hasNext();){
+				Attack a=itr.next();
+				if(a.drawn()){
+					a.progress(delay);
+				}else{
+					itr.remove();
+				}
+				
+			}
 
 		synchronized(drawn){
 			for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
@@ -174,8 +179,9 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		if(a!=null){
 			synchronized(drawn){
 				drawn.add(a);
+				attackToAdd.add(a);
 			}
-			attacks.add(a);
+			
 		}
 	}
 	public static ArrayList<Actor> selectActors(Vector2D position, int radius){
@@ -261,10 +267,16 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 			this.addAttack(player.getAttack(Player.hotKeys.Q, getRelative(new Vector2D(mouseLocation))));
 			break;
 		case KeyEvent.VK_W:
+			this.addAttack(player.getAttack(Player.hotKeys.W, getRelative(new Vector2D(mouseLocation))));
+			
 			break;
 		case KeyEvent.VK_E:
+			this.addAttack(player.getAttack(Player.hotKeys.E, getRelative(new Vector2D(mouseLocation))));
+			
 			break;
 		case KeyEvent.VK_R:
+			this.addAttack(player.getAttack(Player.hotKeys.R, getRelative(new Vector2D(mouseLocation))));
+			
 			break;
 		case KeyEvent.VK_1:
 			break;

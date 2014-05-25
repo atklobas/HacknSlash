@@ -27,6 +27,9 @@ public abstract class Attack implements Drawable{
 	public List<Actor> getSurrounding(Double d){
 		return model.getSurrounding(pos,d);
 	}
+	public void addAttack(Attack a){
+		model.addAttack(a);
+	}
 	public Actor getCreator(){
 		return this.creator;
 	}

@@ -11,7 +11,7 @@ public class Sword extends Weapon {
 	private double range=20;
 	int damage=50000;
 	public Sword(){
-		this.setCooldown(250);
+		this.setCooldown(100);
 	}
 	@Override
 	public Attack createAttack(String attack, Actor creator, Actor target, Vector2D targetPos) {

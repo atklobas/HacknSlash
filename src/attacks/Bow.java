@@ -28,6 +28,8 @@ public class Bow extends Weapon {
 	}
 	
 	private class Arrow extends ProjectileAttack{
+		private int maxTime=10000;
+		private int currentTime=0;
 		int damage;
 		double xLag,yLag;
 		public Arrow(Actor creator, Vector2D target, double speed,int damage) {
@@ -40,6 +42,7 @@ public class Bow extends Weapon {
 		@Override
 		public void progress(int time){
 			super.progress(time);
+			currentTime+=time;
 			SortedLinkedList<Actor> temp=this.getHitList();
 			if(super.hasHit()){
 				temp.getFirst().damage(damage, 0, 0);
@@ -57,7 +60,7 @@ public class Bow extends Weapon {
 
 		@Override
 		public boolean drawn() {
-			return !this.hasHit();
+			return !this.hasHit()||currentTime>maxTime;
 		}
 
 		@Override
