@@ -70,7 +70,6 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 		}
 		if(g!=null){
 			g.setTransform(id);
-			
 			g.setColor(Color.LIGHT_GRAY);
 			g.fillRect(0, 0, width, height);
 			int centerX=(int)center.getElement(0)-width/2;

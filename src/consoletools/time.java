@@ -9,7 +9,14 @@ public class time implements ShellProgram {
 	}
 	@Override
 	public int Execute(Shell s, String... args) throws Exception {
-		main.delay=Integer.parseInt(args[0]);
+		int delay=Integer.parseInt(args[0]);
+		if(delay<1){
+			main.pause();
+		}else{
+			main.delay=delay;
+			main.unPause();
+		}
+		
 		return 0;
 	}
 

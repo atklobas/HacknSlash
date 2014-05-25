@@ -5,15 +5,29 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import attacks.Attack;
+import attacks.Bow;
+import attacks.Weapon;
 import mathematics.Vector;
 import mathematics.Vector2D;
 
 public class Player extends Actor{
+	public enum hotKeys{
+		Q,W,E,R,ONE,TWO,THREE,FOUR,PRIMARY,SECONDARY
+	}
+	Weapon bow=new Bow();
 	
 	public Player(int x, int y){
 		super(new Vector2D(x,y));
 		this.setSpeed(10.);
 		this.setPid(.5, .00, .1);
+		
+	}
+	public Attack getAttack(hotKeys k, Actor target){
+		return bow.createAttack(bow.getAttacks()[0], this, target, target.getPos());
+	}
+	public Attack getAttack(hotKeys k, Vector2D target){
+		return bow.createAttack(bow.getAttacks()[0], this, null, target);
 	}
 	
 	public int getWidth() {
@@ -30,9 +44,9 @@ public class Player extends Actor{
 		return Color.BLACK;
 	}
 	
-	public void damage(int[] damage){
-		super.damage(damage);
-		Main.Main.out.println("Ouch! Player took "+damage[0]+" damage. "+hitpoints+" hp remaining.");
+	public void damage(int health,int mana, int stamina){
+		super.damage(health,mana,stamina);
+		Main.Main.out.println("Ouch! Player took "+health+" damage. "+hitpoints+" hp remaining.");
 	}
 	
 
@@ -42,6 +56,7 @@ public class Player extends Actor{
 		if(this.getSetPoint().subtract(this.getPos()).getLength()<2){
 			this.setSetPoint(this.getPos());
 		}
+		bow.progress(time);
 		
 	}
 	public void draw(Graphics2D g) {

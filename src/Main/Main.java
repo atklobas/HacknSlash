@@ -1,4 +1,6 @@
 package Main;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -11,12 +13,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import graphics.Drawable;
 import graphics.GamePanel;
 
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 import consoletools.Shell;
 import consoletools.modify;
@@ -25,17 +29,17 @@ import mathematics.Vector;
 import mathematics.Vector2D;
 import Map.Wall;
 import actors.Actor;
-import actors.Attack;
 import actors.Faction;
 import actors.NPC;
 import actors.Player;
 import actors.Zombie;
+import attacks.Attack;
 
 
-public class Main implements MouseListener, MouseMotionListener, KeyListener{
+public class Main implements MouseListener, MouseMotionListener, KeyListener, ActionListener{
 	public static int delay=20;
 	public static PrintStream out;
-	
+	public Timer t;
 	
 	public static final int width=800;
 	public static final int height=600;
@@ -48,15 +52,20 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	ArrayList<Wall> walls=new ArrayList<Wall>();
 	ArrayList<Actor> actors=new ArrayList<Actor>();
 	static LinkedList<Attack> attacks = new LinkedList<Attack>();
+	GamePanel canvas;
+	JFrame f;
+	
 	private Vector2D getCenterPoint(){
 		return player.getPos().add(new Vector2D(player.getWidth()/2,player.getHeight()/2));
 	}
 	public static HashMap<String, Faction> factions = new HashMap<String, Faction>();
 	
-	public Main() throws InterruptedException{
-		JFrame f=new JFrame();
+	public Main(){
+		f=new JFrame();
+		Attack.setModel(this);
+		
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		GamePanel canvas=new GamePanel(width,height);
+		canvas=new GamePanel(width,height);
 		canvas.addKeyListener(this);
 		f.add(canvas);
 		f.pack();
@@ -70,7 +79,9 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		factions.put("PLAYER", new Faction("PLAYER"));
 		
 		player.setFaction(factions.get("PLAYER"));
-		player.addAttack("Punch", new Attack(new int[]{0, 1000, 0}, new int[]{8000, 0, 0}, 15, 15));
+		
+		//player.addAttack("Punch", new Attack(new int[]{0, 1000, 0}, new int[]{8000, 0, 0}, 15, 15));
+		
 		s.addCommand("player", new modify(player));
 		
 		s.addCommand("time", new time(this));
@@ -96,60 +107,71 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		}
 		
 		drawn.addAll(actors);
-		while(true){
-			Thread.sleep(delay);
-			if(mouseHeld)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(clickedPoint));
-			for(int i=0; i<actors.size(); i++){
-				if(!actors.get(i).isAlive()){
-					actors.remove(i);
-					i--;
+		t=new Timer(delay, this);
+		t.start();
+	}
+	private void progress(){
+		if(mouseHeld&&mouseButton==1)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(mouseLocation));
+		if(mouseHeld&&mouseButton==3){
+			this.addAttack(player.getAttack(Player.hotKeys.SECONDARY, this.getCenterPoint().subtract(playerCenter).add(new Vector2D(mouseLocation))));
+			
+		}
+		for(int i=0; i<actors.size(); i++){
+			if(!actors.get(i).isAlive()){
+				actors.remove(i);
+				i--;
+			}
+		}
+		
+		
+		for(Actor a:actors){
+
+			a.progress(delay);
+			
+			for(Actor c:actors){
+				
+				if(!(a==c))
+				a.collide(c);
+				for(Wall w:walls){
+					w.Collides(a);
+					w.Collides(c);
 				}
 			}
-			
-			
-			for(Actor a:actors){
-
+		}
+		
+		for(Iterator<Attack> itr=attacks.iterator();itr.hasNext();){
+			Attack a=itr.next();
+			if(a.drawn()){
 				a.progress(delay);
-				
-				for(Actor c:actors){
-					
-					if(!(a==c))
-					a.collide(c);
-					for(Wall w:walls){
-						w.Collides(a);
-						w.Collides(c);
-					}
-				}
+			}else{
+				itr.remove();
 			}
 			
-			for(Attack atk=attacks.poll();atk!=null;atk=attacks.poll()){
+		}
 
-					for(Actor act:actors){
-						atk.collide(act);
-					}
-				
-			}
-
-			synchronized(drawn){
-				for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
-					if(!d.next().drawn()){
-						d.remove();
-					}
+		synchronized(drawn){
+			for(Iterator<Drawable> d=drawn.iterator();d.hasNext();){
+				if(!d.next().drawn()){
+					d.remove();
 				}
-				canvas.draw(drawn, this.getCenterPoint());
-				f.repaint();
 			}
+			canvas.draw(drawn, this.getCenterPoint());
+			f.repaint();
 		}
 	}
 	
 	
-	public static void addAttack(Attack a){
-		a.created=System.currentTimeMillis();
-		
-		synchronized(drawn){
-			drawn.add(a);
+	
+	
+	
+	
+	public void addAttack(Attack a){
+		if(a!=null){
+			synchronized(drawn){
+				drawn.add(a);
+			}
+			attacks.add(a);
 		}
-		attacks.add(a);
 	}
 	
 	
@@ -179,9 +201,18 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	}
 	boolean mouseHeld=false;
 	Vector2D clickedPoint;
+	Vector2D mouseLocation;
+	int mouseButton;
 	@Override
 	public void mousePressed(MouseEvent e) {
-		clickedPoint=new Vector2D(e.getX(),e.getY());
+		mouseLocation=clickedPoint=new Vector2D(e.getX(),e.getY());
+		if(e.getButton()==MouseEvent.BUTTON3){
+			this.mouseButton=3;
+		}else{
+			this.mouseButton=1;
+			
+			
+		}
 		mouseHeld=true;
 		
 	}
@@ -195,7 +226,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		clickedPoint=new Vector2D(e.getX(),e.getY());
+		mouseLocation=new Vector2D(e.getX(),e.getY());
 		
 	}
 
@@ -208,10 +239,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		if(arg0.getKeyChar()=='a'){
+		/*if(arg0.getKeyChar()=='a'){
 			addAttack(player.attack("Punch"));
 
-		}
+		}*/
 		
 	}
 
@@ -225,6 +256,30 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent a) {
+		this.progress();
+		
+	}
+	public void pause(){
+		t.stop();
+	}
+	public void unPause(){
+		t.setDelay(delay);
+		t.start();
+		
+	}
+	public List<Actor> getSurrounding(Vector2D pos, double d) {
+		List<Actor> ret=new ArrayList<Actor>();
+		for(Actor a:actors){
+			if(a.getPos().distance(pos)<=d){
+				ret.add(a);
+			}
+		}
+		return ret;
 	}
 	
 

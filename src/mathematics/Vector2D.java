@@ -75,5 +75,8 @@ public class Vector2D extends Vector {
 	public Vector2D getZero(){
 		return new Vector2D();
 	}
+	public Vector2D getUnitVector(){
+		return this.scale(1.0/this.getLength());
+	}
 
 }

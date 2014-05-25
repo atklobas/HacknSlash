@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import graphics.Drawable;
 import mathematics.Vector2D;
 
-public class Attack implements Drawable{
+public class AttackDep implements Drawable{
 
 	public long created= System.currentTimeMillis();
 	private int length=500;
@@ -25,7 +25,7 @@ public class Attack implements Drawable{
 	
 	private Faction faction;
 	
-	public Attack(int[] cost, int[] damage, double distance, double radius){
+	public AttackDep(int[] cost, int[] damage, double distance, double radius){
 		hpcost = cost[0]; manacost = cost[1]; staminacost = cost[2];
 		hpdamage = damage[0]; manadamage = damage[1]; staminadamage = damage[2];
 		this.distance = distance;
@@ -53,7 +53,7 @@ public class Attack implements Drawable{
 			double length=toMove.getLength();
 			double min=(this.radius+c.getWidth())/2;
 			if(length<min){
-				c.damage(new int[]{hpdamage, manadamage, staminadamage});
+				c.damage(hpdamage, manadamage, staminadamage);
 			}
 		}
 	}

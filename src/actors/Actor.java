@@ -4,12 +4,17 @@ import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Random;
 
+import attacks.Attack;
 import Main.Map;
 import mathematics.Vector;
 import mathematics.Vector2D;
 import graphics.Drawable;
 
 public abstract class Actor implements Drawable{
+	
+	
+	
+	
 	private double maxSpeed=5;
 	double p=.3;
 	double i=.1;
@@ -42,8 +47,8 @@ public abstract class Actor implements Drawable{
 	}
 	
 	
-	public void damage(int[] damage){
-		hitpoints -= damage[0]; manapoints -= damage[1]; staminapoints -= damage[2];
+	public void damage(int health,int mana, int stamina){
+		hitpoints -= health; manapoints -= mana; staminapoints -= stamina;
 	}
 	
 	
@@ -57,18 +62,7 @@ public abstract class Actor implements Drawable{
 	public void setFaction(Faction f){
 		faction = f;
 	}
-	
-	
-	public Attack attack(String attackName){
-		Attack a = attacks.get(attackName);
-		a.setPos(pos.add(facing.scale(a.distance)));
-		return a;
-	}
-	public void addAttack(String attackName, Attack attack){
-		attack.setFaction(getFaction());
-		this.attacks.put(attackName, attack);
-	}
-	
+		
 	public Actor(Vector2D pos){
 		this.pos=pos;
 		this.setPoint=this.getPos();
