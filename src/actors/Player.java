@@ -22,7 +22,7 @@ public class Player extends Actor{
 	Weapon spellBook=new SpellBook();
 	public Player(int x, int y){
 		super(new Vector2D(x,y));
-		this.setSpeed(10.);
+		this.setSpeed(3.);
 		this.setPid(.5, .00, .1);
 		
 	}

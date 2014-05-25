@@ -114,15 +114,25 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		t=new Timer(delay, this);
 		t.start();
 	}
+	
+	private int zombies=0;
+	public void spawnZombie(){
+		if(zombies<100){
+			if(rand.nextInt(1)<5){
+				NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
+				actors.add(generated);
+				this.drawn.add(generated);
+			}
+			zombies++;
+		}
+	}
+	
+	
 	public Vector2D getRelative(Vector2D reg){
 		return this.getCenterPoint().subtract(playerCenter).add(reg);
 	}
 	private void progress(){
-		if(rand.nextInt(1)<5){
-		NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
-		actors.add(generated);
-		this.drawn.add(generated);
-		}
+		
 		
 		if(mouseHeld&&mouseButton==1)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(mouseLocation));
 		if(mouseHeld&&mouseButton==3){
@@ -131,6 +141,9 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		}
 		for(int i=0; i<actors.size(); i++){
 			if(!actors.get(i).isAlive()){
+				if(actors.get(i) instanceof Zombie){
+					zombies--;
+				}
 				actors.remove(i);
 				i--;
 			}

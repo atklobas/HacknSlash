@@ -38,6 +38,9 @@ public class Sword extends Weapon {
 		int imageDuration=150;
 		boolean firstTime=true;
 		int damage;
+		
+		
+		
 		public Slash(Actor creator, Vector2D target , double range, int damage) {
 			super(creator, null, target.subtract(creator.getPos()).getUnitVector().scale(range*2/3.).add(creator.getPos()));
 			this.damage=damage;
@@ -80,8 +83,10 @@ public class Sword extends Weapon {
 			if(this.firstTime){
 				this.firstTime=false;
 				for(Actor a:this.getSurrounding(range)){
-					if(a!=this.getCreator())
+					if(a!=this.getCreator()){
 						a.damage(damage, 0, 0);
+						a.addEffect(new Knockback(this.getPos()));
+					}
 				}
 			}
 			imageDuration-=time;

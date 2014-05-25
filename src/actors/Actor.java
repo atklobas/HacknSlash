@@ -2,11 +2,13 @@ package actors;
 
 import java.awt.Graphics2D;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
 import attacks.Attack;
+import attacks.Effect;
 import Main.Map;
 import mathematics.Vector;
 import mathematics.Vector2D;
@@ -34,6 +36,7 @@ public abstract class Actor implements Drawable{
 	private Vector2D setPoint;
 	private AnimatedSprite sprite;
 	private Faction faction;
+	private HashSet<Effect> effects = new HashSet<Effect>();
 	
 	
 	
@@ -49,6 +52,20 @@ public abstract class Actor implements Drawable{
 		this.d=d;
 	}
 	
+	public void addEffect(Effect e){
+		effects.add(e);
+		e.start(this);
+	}
+	
+	public void removeEffect(Effect e){
+		effects.remove(e);
+	}
+	
+	public void progressEffects(int time){
+		for(Effect e:effects){
+			e.progress(time);
+		}
+	}
 	
 	public AnimatedSprite getSprite(){
 		return sprite;
@@ -101,6 +118,7 @@ public abstract class Actor implements Drawable{
 	}
 	public void progress(int time){
 		sprite.progress(time);
+		progressEffects(time);
 		
 		hitpoints += hpregen*time;
 		manapoints += manaregen*time;

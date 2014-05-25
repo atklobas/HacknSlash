@@ -208,7 +208,7 @@ public class SpellBook extends Weapon {
 				if(bounces.size()>0){
 					lastNode=bounces.getLast();
 				}
-				System.out.println(lastNode);
+				//System.out.println(lastNode);
 				List<Actor> possible=this.getSurrounding(this.maxDistance, lastNode.getPos());
 				possible.removeAll(bounces);
 				possible.remove(this.getCreator());
