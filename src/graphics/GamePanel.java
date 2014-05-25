@@ -62,6 +62,15 @@ public class GamePanel extends Component implements MouseListener, MouseMotionLi
 	Graphics2D g;
 	Graphics2D gg;
 	
+	
+	public void addFrame(InternalFrame frame){
+		frames.add(frame);
+	}
+	
+	public void removeFrame(InternalFrame frame){
+		frames.remove(frame);
+	}
+	
 	public void draw(List<Drawable> todraw,Vector center){
 		if(g==null){
 			image=this.createVolatileImage(width, height);
