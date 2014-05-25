@@ -2,22 +2,36 @@ package attacks;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.LinkedList;
+import java.util.List;
 
 import mathematics.Vector2D;
 import actors.Actor;
 
 public class SpellBook extends Weapon {
+	public SpellBook(){
+		this.setCooldown(100);
+	}
 
 	@Override
 	public Attack createAttack(String attack, Actor creator, Actor target, Vector2D targetPos) {
 		// TODO Auto-generated method stub
-		return new Meteor(creator, target, targetPos);
+		if(this.canAttack()){
+			this.resetCoolDown();
+			switch(attack){
+				case "meteor":
+					return new Meteor(creator, target, targetPos);
+				case "chain lightning":
+					return new ChainLightning(creator, target, targetPos);
+			}
+			
+		}
+		return null;
 	}
 
 	@Override
 	public String[] getAttacks() {
-		// TODO Auto-generated method stub
-		return new String[]{"meteor","orb","chain lightning "};
+		return new String[]{"meteor","orb","chain lightning"};
 	}
 	private class Meteor extends Attack{
 		int delay=1500;
@@ -135,6 +149,78 @@ public class SpellBook extends Weapon {
 				if(a!=this.getCreator()){
 					a.damage(damage*time, 0, 0);
 				}
+			}
+			
+		}
+		
+	}
+	private class ChainLightning extends Attack{
+		private LinkedList<Actor> bounces=new LinkedList<Actor>();
+		double maxDistance=250;
+		int maxBounces=10;
+		int countDown=100;
+		int damage=75000;
+		public ChainLightning(Actor creator, Actor target, Vector2D pos) {
+			super(creator, target, creator.getPos());
+			bounces.add(this.getCreator());
+		}
+
+		@Override
+		public int getWidth() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getHeight() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Color getColor() {
+			// TODO Auto-generated method stub
+			return Color.YELLOW;
+		}
+
+		@Override
+		public void draw(Graphics2D g) {
+			g.setColor(this.getColor());
+			Actor previous=this.getCreator();
+			
+			for(Actor a:bounces){
+				Vector2D pos1=previous.getPos();
+				Vector2D pos2=a.getPos();
+				g.drawLine((int)pos1.getX(), (int)pos1.getY(), (int)pos2.getX(), (int)pos2.getY());
+				previous=a;
+			}
+		}
+
+		@Override
+		public boolean drawn() {
+			return this.countDown>0;
+		}
+
+		@Override
+		public void progress(int time) {
+			if (this.maxBounces>0){
+				Actor lastNode=this.getCreator();
+				if(bounces.size()>0){
+					lastNode=bounces.getLast();
+				}
+				System.out.println(lastNode);
+				List<Actor> possible=this.getSurrounding(this.maxDistance, lastNode.getPos());
+				possible.removeAll(bounces);
+				possible.remove(this.getCreator());
+				if(possible.size()>0){
+					Actor selected= possible.get(Main.Main.rand.nextInt(possible.size()));
+					selected.damage(damage, 0, 0);
+					bounces.add(selected);
+				}else{
+					maxBounces=0;
+				}
+			}else{
+				this.countDown-=time;
 			}
 			
 		}

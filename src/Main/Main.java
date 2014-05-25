@@ -48,7 +48,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 	static LinkedList<graphics.Drawable> drawn=new LinkedList<graphics.Drawable>();
 	Vector2D playerCenter;
 	public static Player player;
-	Random rand=new Random();
+	public static Random rand=new Random();
 	ArrayList<Wall> walls=new ArrayList<Wall>();
 	static ArrayList<Actor> actors=new ArrayList<Actor>();
 	static LinkedList<Attack> attacks = new LinkedList<Attack>();
@@ -118,6 +118,12 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		return this.getCenterPoint().subtract(playerCenter).add(reg);
 	}
 	private void progress(){
+		if(rand.nextInt(1)<5){
+		NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
+		actors.add(generated);
+		this.drawn.add(generated);
+		}
+		
 		if(mouseHeld&&mouseButton==1)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(mouseLocation));
 		if(mouseHeld&&mouseButton==3){
 			this.addAttack(player.getAttack(Player.hotKeys.SECONDARY, getRelative(new Vector2D(mouseLocation))));

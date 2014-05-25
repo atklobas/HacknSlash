@@ -35,7 +35,10 @@ public class Player extends Actor{
 		case Q:
 			return sword.createAttack("slash", this, target, loc);
 		case W:
-			return spellBook.createAttack("fireball", this, target, loc);
+			return spellBook.createAttack("meteor", this, target, loc);
+		case E:
+			return spellBook.createAttack("chain lightning", this, target, loc);
+			
 		default:
 			return null;
 		
@@ -78,6 +81,7 @@ public class Player extends Actor{
 		}
 		bow.progress(time);
 		sword.progress(time);
+		spellBook.progress(time);
 		
 	}
 	public void draw(Graphics2D g) {
