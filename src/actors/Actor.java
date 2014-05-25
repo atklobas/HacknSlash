@@ -2,11 +2,14 @@ package actors;
 
 import java.awt.Graphics2D;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 import Main.Map;
 import mathematics.Vector;
 import mathematics.Vector2D;
+import graphics.AnimatedSprite;
 import graphics.Drawable;
 
 public abstract class Actor implements Drawable{
@@ -24,7 +27,7 @@ public abstract class Actor implements Drawable{
 	HashMap<String, Attack> attacks = new HashMap<String, Attack>();
 	public static Random rand=new Random();
 	private Vector2D setPoint;
-	
+	private AnimatedSprite sprite;
 	private Faction faction;
 	
 	
@@ -41,6 +44,10 @@ public abstract class Actor implements Drawable{
 		this.d=d;
 	}
 	
+	
+	public AnimatedSprite getSprite(){
+		return sprite;
+	}
 	
 	public void damage(int[] damage){
 		hitpoints -= damage[0]; manapoints -= damage[1]; staminapoints -= damage[2];
@@ -59,6 +66,7 @@ public abstract class Actor implements Drawable{
 	}
 	
 	
+	
 	public Attack attack(String attackName){
 		Attack a = attacks.get(attackName);
 		a.setPos(pos.add(facing.scale(a.distance)));
@@ -72,6 +80,7 @@ public abstract class Actor implements Drawable{
 	public Actor(Vector2D pos){
 		this.pos=pos;
 		this.setPoint=this.getPos();
+		sprite = new AnimatedSprite();
 	}
 	public void setSetPoint(Vector2D v){
 		this.setPoint=v;
@@ -96,6 +105,8 @@ public abstract class Actor implements Drawable{
 		this.pos=this.pos.add(trans);
 	}
 	public void progress(int time){
+		sprite.progress(time);
+		
 		hitpoints += hpregen*time;
 		manapoints += manaregen*time;
 		staminapoints += staminaregen*time;
@@ -144,9 +155,14 @@ public abstract class Actor implements Drawable{
 	}
 	@Override
 	public void draw(Graphics2D g) {
+		Set<String> animations = sprite.getAnimations();
+		if(!animations.isEmpty()){
+			Iterator<String> itr= animations.iterator();
+			sprite.animate(itr.next());
+			g.drawImage(sprite.getImage(), null, (int)this.getX()-this.getWidth()/2, (int)this.getY()-this.getHeight()/2);
+		}
 		g.setColor(this.getColor());
 		g.fillRect((int)this.getX()-this.getWidth()/2, (int)this.getY()-this.getHeight()/2, (int)this.getWidth(), (int)this.getHeight());
-		
 	}
 	public void collide(Actor c) {
 		Vector2D toMove=c.pos.subtract(this.pos);

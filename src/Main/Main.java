@@ -15,6 +15,7 @@ import java.util.Random;
 
 import graphics.Drawable;
 import graphics.GamePanel;
+import graphics.SpriteEditor;
 
 import javax.swing.JFrame;
 
@@ -43,10 +44,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	int boxHeight=height;
 	static LinkedList<graphics.Drawable> drawn=new LinkedList<graphics.Drawable>();
 	Vector2D playerCenter;
-	public static Player player=new Player(50,50);
+	public static Player player;
 	Random rand=new Random();
 	ArrayList<Wall> walls=new ArrayList<Wall>();
-	ArrayList<Actor> actors=new ArrayList<Actor>();
+	static ArrayList<Actor> actors=new ArrayList<Actor>();
 	static LinkedList<Attack> attacks = new LinkedList<Attack>();
 	private Vector2D getCenterPoint(){
 		return player.getPos().add(new Vector2D(player.getWidth()/2,player.getHeight()/2));
@@ -66,9 +67,12 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		Shell s=new Shell();
 		
 		
+		
+		
 		factions.put("ENEMY", new Faction("ENEMY"));
 		factions.put("PLAYER", new Faction("PLAYER"));
 		
+		player=new Player(50,50);
 		player.setFaction(factions.get("PLAYER"));
 		player.addAttack("Punch", new Attack(new int[]{0, 1000, 0}, new int[]{8000, 0, 0}, 15, 15));
 		s.addCommand("player", new modify(player));
@@ -142,6 +146,19 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		}
 	}
 	
+	
+	public static ArrayList<Actor> selectActors(Vector2D position, int radius){
+		ArrayList<Actor> ret = new ArrayList<Actor>();
+		for(Actor a:actors){
+			Vector2D toMove=a.getPos().subtract(position);
+			double length=toMove.getLength();
+			double min=(radius+a.getWidth())/2;
+			if(length<min){
+				ret.add(a);
+			}
+		}
+		return ret;
+	}
 	
 	public static void addAttack(Attack a){
 		a.created=System.currentTimeMillis();

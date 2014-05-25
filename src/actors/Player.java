@@ -14,6 +14,7 @@ public class Player extends Actor{
 		super(new Vector2D(x,y));
 		this.setSpeed(10.);
 		this.setPid(.5, .00, .1);
+		this.damage(new int[]{-100000000,0,0});
 	}
 	
 	public int getWidth() {
