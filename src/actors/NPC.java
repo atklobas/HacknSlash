@@ -52,8 +52,8 @@ public class NPC extends Actor{
 	}
 	public void draw(Graphics2D g) {
 		g.setColor(Color.red);
-		Vector2D setPoint=this.getSetPoint();
-		g.drawRect((int)setPoint.getX()-this.getWidth()/2, (int)setPoint.getY()-this.getHeight()/2, this.getWidth()	, this.getHeight());
+		//Vector2D setPoint=this.getSetPoint();
+		//g.drawRect((int)setPoint.getX()-this.getWidth()/2, (int)setPoint.getY()-this.getHeight()/2, this.getWidth()	, this.getHeight());
 		super.draw(g);	
 				
 	}

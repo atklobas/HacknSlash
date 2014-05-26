@@ -159,7 +159,7 @@ public class SpellBook extends Weapon {
 		double maxDistance=250;
 		int maxBounces=10;
 		int countDown=100;
-		int damage=75000;
+		int damage=150000;
 		public ChainLightning(Actor creator, Actor target, Vector2D pos) {
 			super(creator, target, creator.getPos());
 			bounces.add(this.getCreator());
@@ -208,7 +208,6 @@ public class SpellBook extends Weapon {
 				if(bounces.size()>0){
 					lastNode=bounces.getLast();
 				}
-				System.out.println(lastNode);
 				List<Actor> possible=this.getSurrounding(this.maxDistance, lastNode.getPos());
 				possible.removeAll(bounces);
 				possible.remove(this.getCreator());
@@ -216,6 +215,7 @@ public class SpellBook extends Weapon {
 					Actor selected= possible.get(Main.Main.rand.nextInt(possible.size()));
 					selected.damage(damage, 0, 0);
 					bounces.add(selected);
+					maxBounces--;
 				}else{
 					maxBounces=0;
 				}

@@ -104,24 +104,30 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		
 		Faction enemyFaction = new Faction("ENEMY");
 		
-		for(int i=0;i<40;i++){
+		for(int i=0;i<100;i++){
 			NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
 			//System.out.println("new "+generated.getFaction()+" created.");
 			actors.add(generated);
 		}
 		
 		drawn.addAll(actors);
+		
 		t=new Timer(delay, this);
+		t.setInitialDelay(200);
 		t.start();
 	}
 	public Vector2D getRelative(Vector2D reg){
 		return this.getCenterPoint().subtract(playerCenter).add(reg);
 	}
+	
 	private void progress(){
-		if(rand.nextInt(1)<5){
+		for(int i=rand.nextInt(100);i>0;i--){
+		if(rand.nextInt(1)<1){
 		NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
 		actors.add(generated);
+		
 		this.drawn.add(generated);
+		}
 		}
 		
 		if(mouseHeld&&mouseButton==1)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(mouseLocation));
