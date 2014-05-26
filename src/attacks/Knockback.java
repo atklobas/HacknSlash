@@ -4,10 +4,10 @@ package attacks;
 import mathematics.Vector2D;
 
 public class Knockback extends Effect{
-	int distance = 2000;
+	int distance = 50;
 	Vector2D center;
 	int duration = 10000;
-	int speed = 20;
+	int speed = 500;
 	
 	public Knockback(Vector2D center){
 		//System.out.println("Knockback created: "+center);
@@ -23,10 +23,11 @@ public class Knockback extends Effect{
 	public void progress(int time){
 		if(duration>0 && distance>0){
 			//System.out.println("Knockback progress "+affected.toString()+" ...");
-			Vector2D vel = affected.getPos().subtract(center).scale(time*.001*speed);
+			Vector2D vel = affected.getPos().subtract(center).getUnitVector().scale(time*speed*.001);
+			//System.out.println(vel);
 			affected.translate(vel);
 			duration -= time;
-			distance -= time*speed;
+			distance -= time*.001*speed;
 		}else{
 			this.end(affected);
 		}

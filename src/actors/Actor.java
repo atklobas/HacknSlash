@@ -53,17 +53,28 @@ public abstract class Actor implements Drawable{
 	}
 	
 	public void addEffect(Effect e){
-		effects.add(e);
-		e.start(this);
+		synchronized(this){
+			effects.add(e);
+			e.start(this);
+		}
 	}
 	
 	public void removeEffect(Effect e){
-		effects.remove(e);
+		synchronized(this){
+			effects.remove(e);
+		}
 	}
 	
 	public void progressEffects(int time){
-		for(Effect e:effects){
-			e.progress(time);
+		synchronized(this){
+			
+			for(Iterator<Effect> itr=effects.iterator();itr.hasNext();){
+				Effect e=itr.next();
+				e.progress(time);
+				if(e.hasEnded()){
+					itr.remove();
+				}
+			}
 		}
 	}
 	
