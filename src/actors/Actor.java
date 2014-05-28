@@ -1,19 +1,43 @@
 package actors;
 
+import interaction.Event;
+import interaction.Observable;
+import interaction.Observer;
+
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
 import attacks.Attack;
+import attacks.Effect;
 import Main.Map;
 import mathematics.Vector;
 import mathematics.Vector2D;
 import graphics.AnimatedSprite;
 import graphics.Drawable;
 
-public abstract class Actor implements Drawable{
+public abstract class Actor implements Drawable, Observable{
+	private ArrayList<Observer> observers=new ArrayList<Observer>();
+	public void addObserver(Observer o){
+		this.observers.add(o);
+	}
+	public void removeObserver(Observer o){
+		this.observers.remove(o);
+	}
+	public void notify(Event e){
+		//XXX possibly add Dedicated thread for all actors
+		for(Observer o:this.observers){
+			o.onNotify(e);
+		}
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -34,8 +58,7 @@ public abstract class Actor implements Drawable{
 	private Vector2D setPoint;
 	private AnimatedSprite sprite;
 	private Faction faction;
-	
-	
+	private HashSet<Effect> effects = new HashSet<Effect>();
 	
 	
 	private Vector2D pos;
@@ -49,6 +72,31 @@ public abstract class Actor implements Drawable{
 		this.d=d;
 	}
 	
+	public void addEffect(Effect e){
+		synchronized(this){
+			effects.add(e);
+			e.start(this);
+		}
+	}
+	
+	public void removeEffect(Effect e){
+		synchronized(this){
+			effects.remove(e);
+		}
+	}
+	
+	public void progressEffects(int time){
+		synchronized(this){
+			
+			for(Iterator<Effect> itr=effects.iterator();itr.hasNext();){
+				Effect e=itr.next();
+				e.progress(time);
+				if(e.hasEnded()){
+					itr.remove();
+				}
+			}
+		}
+	}
 	
 	public AnimatedSprite getSprite(){
 		return sprite;
@@ -101,6 +149,7 @@ public abstract class Actor implements Drawable{
 	}
 	public void progress(int time){
 		sprite.progress(time);
+		progressEffects(time);
 		
 		hitpoints += hpregen*time;
 		manapoints += manaregen*time;

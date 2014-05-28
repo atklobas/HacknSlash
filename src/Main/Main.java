@@ -104,7 +104,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		
 		Faction enemyFaction = new Faction("ENEMY");
 		
-		for(int i=0;i<100;i++){
+		for(int i=0;i<40;i++){
 			NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
 			//System.out.println("new "+generated.getFaction()+" created.");
 			actors.add(generated);
@@ -116,19 +116,27 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		t.setInitialDelay(200);
 		t.start();
 	}
+	
+	private int zombies=0;
+	public void spawnZombie(){
+		if(zombies<80){
+			if(rand.nextInt(1)<5){
+				NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
+				actors.add(generated);
+				this.drawn.add(generated);
+			}
+			//System.out.println("Zombie spawned");
+			zombies++;
+		}
+	}
+	
+	
 	public Vector2D getRelative(Vector2D reg){
 		return this.getCenterPoint().subtract(playerCenter).add(reg);
 	}
 	
 	private void progress(){
-		for(int i=rand.nextInt(100);i>0;i--){
-		if(rand.nextInt(1)<1){
-		NPC generated=new Zombie(new Vector2D(rand.nextInt(boxWidth*2)-boxWidth,rand.nextInt(boxHeight*2)-boxHeight));
-		actors.add(generated);
-		
-		this.drawn.add(generated);
-		}
-		}
+		spawnZombie();
 		
 		if(mouseHeld&&mouseButton==1)player.setSetPoint(this.getCenterPoint().subtract(playerCenter).add(mouseLocation));
 		if(mouseHeld&&mouseButton==3){
@@ -137,6 +145,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Ac
 		}
 		for(int i=0; i<actors.size(); i++){
 			if(!actors.get(i).isAlive()){
+				if(actors.get(i) instanceof Zombie){
+					zombies--;
+					//System.out.println("Zombie Killed!");
+				}
 				actors.remove(i);
 				i--;
 			}

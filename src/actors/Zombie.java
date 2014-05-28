@@ -4,10 +4,13 @@ import attacks.Attack;
 import mathematics.Vector2D;
 
 public class Zombie extends NPC{
+	private static int zombies = 0;
 
 	public Zombie(Vector2D pos) {
 		super(pos);
 		this.setFaction(Main.Main.factions.get("ENEMY"));
+		zombies++;
+		this.hitpoints=1000000;
 		//this.addAttack("ZOMG", new Attack(new int[]{100,0,200}, new int[]{200,0,100}, 10,10));
 	}
 	public void progress(int time){

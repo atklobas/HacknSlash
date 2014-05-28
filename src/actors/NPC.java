@@ -12,7 +12,7 @@ public class NPC extends Actor{
 
 	public NPC(Vector2D pos) {
 		super(pos);
-		this.setSpeed(2.);
+		this.setSpeed(1.5);
 		this.setPid(.2, .5, .1);
 	}
 	
@@ -37,16 +37,10 @@ public class NPC extends Actor{
 	@Override
 	public Color getColor() {
 		// TODO Auto-generated method stub
-		return Color.GREEN;
+		return Color.white;
 	}
-	int progressionCounter;
 	@Override
 	public void progress(int time) {
-		progressionCounter++;
-		if(progressionCounter%8==0){
-			//this.setSetPoint(this.getPos().add(new Vector2D(rand.nextInt(100)-50,rand.nextInt(100)-50)));
-			this.setSetPoint(Main.Main.player.getSetPoint());
-		}
 		super.progress(time);
 		
 	}
