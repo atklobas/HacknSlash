@@ -161,8 +161,39 @@ public class Actor implements Sprited, Observable{
 		if(trans.getX()<9999)
 		this.pos=this.pos.add(trans);
 	}
-	public void progress(int time){
+	
+	
+	private void animateSprite(){
+		Vector2D north = new Vector2D(0,-1);
+		double angle = Math.toDegrees(facing.getAngle(north));
+		boolean standing = velocity.getLength()<0.5;
 		
+		if(angle<45){
+			if(standing){
+				sprite.animate("upstanding");
+			}else
+			sprite.animate("up");
+		}else if(angle>135){
+			if(standing){
+				sprite.animate("downstanding");
+			}else
+			sprite.animate("down");
+		}else if(facing.getX()>0){
+			if(standing){
+				sprite.animate("rightstanding");
+			}else
+			sprite.animate("right");
+		}else{
+			if(standing){
+				sprite.animate("leftstanding");
+			}else
+			sprite.animate("left");
+		}
+	}
+	
+	
+	public void progress(int time){
+		animateSprite();
 		
 		sprite.progress(time);
 		progressEffects(time);

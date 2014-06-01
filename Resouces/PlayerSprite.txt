@@ -1,37 +1,37 @@
-basic sprites2.png
+player1.png
 
-upleft
+up
 24 0 24 32 12 16
 0 0 24 32 12 16
 24 0 24 32 12 16
 48 0 24 32 12 16
 
-upright
+right
 24 32 24 32 12 16
 0 32 24 32 12 16
 24 32 24 32 12 16
 48 32 24 32 12 16
 
-downright
+down
 24 64 24 32 12 16
 0 64 24 32 12 16
 24 64 24 32 12 16
 48 64 24 32 12 16
 
-downleft
+left
 24 96 24 32 12 16
 0 96 24 32 12 16
 24 96 24 32 12 16
 48 96 24 32 12 16
 
-upleftstanding
+upstanding
 24 0 24 32 12 16
 
-uprightstanding
+rightstanding
 24 32 24 32 12 16
 
-downrightstanding
+downstanding
 24 64 24 32 12 16
 
-downleftstanding
+leftstanding
 24 96 24 32 12 16
