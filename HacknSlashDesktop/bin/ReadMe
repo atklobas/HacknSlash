@@ -1,0 +1,10 @@
+The purpose of project is to separate code specific to desktop executables from code that contains
+game logic. interacted with through a set of interfaces that could be remade for any platform.
+
+All interaction with this code from platform independent code should be done through classes the external
+folder in the using project.
+
+if done correctly it should allow for seamless transition between desktop, applet and android.
+
+
+In order to facilitate simultaneous testing for multiple deploy types the main will be in this project
