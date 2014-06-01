@@ -279,7 +279,17 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 	}
 	LinkedList<Long> times= new LinkedList<Long>();
 	double frameRate=0;
+	
 	public void render(List<Renderable> rendered, int x, int y) {
+		
+		
+		
+		if(times.size()>100){
+			frameRate=(times.getLast()-times.getFirst())/((double)times.size()-1);
+			times.removeFirst();
+			//System.out.println(System.currentTimeMillis()-times.getLast());
+		}
+		times.add(System.currentTimeMillis());
 		
 		if(image[currentImage%image.length]==null){
 			image[currentImage%image.length]=this.createVolatileImage(width, height);
@@ -305,7 +315,7 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 				if(r instanceof Sprited){
 					Sprite s=((Sprited) r).getSprite();
 					if(s instanceof PC_Sprite){
-						((PC_Sprite) s).draw(g, r.getX()-x, r.getY()-y);
+						((PC_Sprite) s).draw(g, r.getX(), r.getY());
 					}
 				}else if(r instanceof Drawable){
 					((Drawable) r).draw(pen,x-width/2,y-height/2,width,height);
@@ -317,12 +327,7 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 		
 	}
 	public void display(){
-		times.add(System.currentTimeMillis());
-		if(times.size()>10){
-			
-			frameRate=(times.getLast()-times.getFirst())/((double)times.size()-1);
-			times.removeFirst();
-		}
+		
 		this.repaint();
 	}
 		

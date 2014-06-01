@@ -24,8 +24,9 @@ public class World implements Drawable{
 	int Yoffset=1;
 	Region[][] regions=new Region[2][2];
 	public World(ResourceLoader loader) {
+		
 		try {
-			ImageResource ir=loader.LoadImageResource("../Resouces/smalltiles.png");
+			ImageResource ir=loader.LoadImageResource("smalltiles.png");
 			stone=new Tile(ir.createSprite(0, 16, 16, 16),tileSize,tileSize,true);
 			sand=new Tile(ir.createSprite(2*16, 1*16, 16, 16),tileSize,tileSize,true);
 			oldstone=new Tile(ir.createSprite(4*16, 2*16, 16, 16),tileSize,tileSize,true);

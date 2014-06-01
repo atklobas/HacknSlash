@@ -8,6 +8,7 @@ import external.resources.Resource;
 
 public class PC_ResourceLoader implements external.resources.ResourceLoader{
 
+	public static String defaultLocation="../Resouces/";
 	public PC_ResourceLoader() {
 		// TODO Auto-generated constructor stub
 	}
@@ -29,12 +30,11 @@ public class PC_ResourceLoader implements external.resources.ResourceLoader{
 	}
 
 	public ImageResource LoadImageResource(String location) throws IOException {
-		return new PC_ImageResource(location.trim());
+		return new PC_ImageResource((defaultLocation+location).trim());
 	}
 
 	public ClassResource LoadClassResource(String location) throws IOException {
-		// TODO Auto-generated method stub
-		return new PC_ClassResource(location.trim());
+		return new PC_ClassResource((defaultLocation+location).trim());
 	}
 
 }

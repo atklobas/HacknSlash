@@ -1,6 +1,7 @@
 package actors;
 
 
+import external.graphics.Sprite;
 import attacks.Attack;
 import attacks.Bow;
 import attacks.SpellBook;
@@ -17,5 +18,6 @@ public class Player extends Actor{
 		this.setPid(.5, .00, .1);
 		
 	}
+
 
 }

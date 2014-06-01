@@ -13,6 +13,8 @@ import java.util.Set;
 
 import external.graphics.Drawable;
 import external.graphics.Renderable;
+import external.graphics.Sprite;
+import external.graphics.Sprited;
 import attacks.Attack;
 import attacks.Effect;
 import Map.Map;
@@ -20,7 +22,7 @@ import mathematics.Vector;
 import mathematics.Vector2D;
 import graphics.AnimatedSprite;
 
-public class Actor implements Renderable, Observable{
+public class Actor implements Sprited, Observable{
 	private ArrayList<Observer> observers=new ArrayList<Observer>();
 	public void addObserver(Observer o){
 		this.observers.add(o);
@@ -35,7 +37,12 @@ public class Actor implements Renderable, Observable{
 		}
 	}
 	
+	Sprite tempSprite=null;
 	
+	public void addSprite(Sprite sprite) {
+		tempSprite=sprite;
+		
+	}
 	
 	
 	
@@ -99,8 +106,8 @@ public class Actor implements Renderable, Observable{
 		}
 	}
 	
-	public AnimatedSprite getSprite(){
-		return sprite;
+	public Sprite getSprite(){
+		return tempSprite;
 	}
 	
 	public void damage(int health,int mana, int stamina){

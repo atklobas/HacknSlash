@@ -1,5 +1,6 @@
 package Main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import console.Shell;
 import external.graphics.Renderable;
 import external.graphics.View;
 import external.io.Command;
+import external.resources.ImageResource;
 import external.resources.ResourceLoader;
 import Map.World;
 import actors.Actor;
@@ -26,30 +28,41 @@ public class Game {
 	
 	View view;
 	Shell shell;
+	World world;
+	ResourceLoader loader;
 	
 	
 	private int maxRate=20;
 	
-	LinkedList<Actor> actors=new LinkedList<Actor>();
-	LinkedList<Actor> newActors=new LinkedList<Actor>();
-	LinkedList<Attack> attacks=new LinkedList<Attack>();
-	LinkedList<Attack> newAttacks=new LinkedList<Attack>();
-	LinkedList<Command> commands=new LinkedList<Command>();
-	LinkedList<Command> newCommands=new LinkedList<Command>();
-	LinkedList<Renderable> rendered=new LinkedList<Renderable>();
-	LinkedList<Renderable> newRendered=new LinkedList<Renderable>();
+	private LinkedList<Actor> actors=new LinkedList<Actor>();
+	private LinkedList<Actor> newActors=new LinkedList<Actor>();
+	private LinkedList<Attack> attacks=new LinkedList<Attack>();
+	private LinkedList<Attack> newAttacks=new LinkedList<Attack>();
+	private LinkedList<Command> commands=new LinkedList<Command>();
+	private LinkedList<Command> newCommands=new LinkedList<Command>();
+	private LinkedList<Renderable> rendered=new LinkedList<Renderable>();
+	private LinkedList<Renderable> newRendered=new LinkedList<Renderable>();
 	
-	World world;
 	
 	public Game(Shell c, View v, ResourceLoader loader){
 		this.shell=c;
 		this.view=v;
+		world=new World(loader);
+		rendered.add(world);
 		player=new Player(000, 000);
 		rendered.add(player);
 		actors.add(player);
 		
-		world=new World(loader);
-		rendered.add(world);
+		
+		
+		try {
+			ImageResource ir=loader.LoadImageResource("basic sprites.png");
+			player.addSprite(ir.createSprite(0, 0, 24, 34));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		 
 		
@@ -65,15 +78,16 @@ public class Game {
 		int lag=0;
 		while(true){//mostly timing code
 			lag=(int)(System.currentTimeMillis()-previousTime);
-			previousTime+=lag;
+			previousTime+=lag;//System.currentTimeMillis();
 			input();
 			update(lag);
 			render();
 			time=System.currentTimeMillis();
 			try {
 				int sleepTime=(int)(maxRate-(time-previousTime));
-				if(sleepTime>0)
+				if(sleepTime>0){
 				Thread.sleep(sleepTime);
+				}
 			} catch (InterruptedException e) {
 				//NOTHING, just move along
 			}
@@ -184,6 +198,7 @@ public class Game {
 
 		@Override
 		public void run() {
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 			gameLoop();
 			
 		}
