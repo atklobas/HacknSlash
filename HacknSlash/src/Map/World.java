@@ -18,7 +18,7 @@ public class World implements Drawable{
 	Tile sand;
 	Tile oldstone;
 	Tile dirt;
-	int tileSize=16*3;
+	int tileSize=16*5;
 	int regionSize=32;
 	int Xoffset=1;
 	int Yoffset=1;
