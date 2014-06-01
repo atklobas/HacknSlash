@@ -54,11 +54,13 @@ public class Game {
 		player=new Player(000, 000);
 		rendered.add(player);
 		actors.add(player);
+		AnimationLoader al=new AnimationLoader(loader);
 		
 		
 		
 		try {
-			ImageResource ir=loader.LoadImageResource("basic sprites2.png");
+			al.addAntimation(player, "PlayerSprite.txt");
+			/*ImageResource ir=loader.LoadImageResource("basic sprites2.png");
 			ir.setTransparent(0, 0);
 			//player.addSprite(ir.createSprite(0, 0, 24, 34));
 			Sprite[] sprites = new Sprite[4];
@@ -91,6 +93,7 @@ public class Game {
 			player.addAnimation("downrightstanding", Arrays.asList(sprites), 500);
 			sprites[0] = ir.createSprite(24, 96, 24, 32,12,16);
 			player.addAnimation("downleftstanding", Arrays.asList(sprites), 500);
+			/**/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

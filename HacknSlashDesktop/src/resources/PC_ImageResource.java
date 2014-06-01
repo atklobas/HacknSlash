@@ -113,7 +113,6 @@ public class PC_ImageResource extends external.resources.ImageResource{
 		
 	}
 	public void redraw(){
-		System.out.println("redrawing");
 		Graphics2D temp=image.createGraphics();
 		temp.setComposite(AlphaComposite.DstOut);
 		
@@ -122,6 +121,7 @@ public class PC_ImageResource extends external.resources.ImageResource{
 	    temp.drawImage(presistent,0,0,null);
 	}
 	public void createImage(){
+		System.out.println("creating new volitile image()");
 		image=gc.createCompatibleVolatileImage(presistent.getWidth(), presistent.getHeight(),imageType);
 	}
 	
