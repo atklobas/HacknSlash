@@ -42,10 +42,6 @@ public class SelectionBox {
 	public void release(int startX, int startY, int endX, int endY){
 		selected=fromDrag(startX, startY,endX,endY);
 		
-		this.s.setSheetX((int)selected.getX());
-		this.s.setSheetY((int)selected.getY());
-		this.s.setSheetWidth((int)selected.getWidth());
-		this.s.setSheetHeight((int)selected.getHeight());
 		selected=null;
 		this.resetRects();
 	}

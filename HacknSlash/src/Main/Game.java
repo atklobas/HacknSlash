@@ -57,7 +57,8 @@ public class Game {
 		
 		try {
 			ImageResource ir=loader.LoadImageResource("basic sprites.png");
-			player.addSprite(ir.createSprite(0, 0, 24, 34));
+			ir.setTransparent(0, 0);
+			player.addSprite(ir.createSprite(0, 0, 24, 34,12,16));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

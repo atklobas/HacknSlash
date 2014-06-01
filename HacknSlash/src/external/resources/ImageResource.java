@@ -9,5 +9,7 @@ public abstract class ImageResource extends Resource {
 	public String getType(){
 		return "image";
 	}
+	public abstract Sprite createSprite(int x, int y, int width, int height, int offsetX, int offsetY);
+	public abstract void setTransparent(int x, int y);
 	
 }

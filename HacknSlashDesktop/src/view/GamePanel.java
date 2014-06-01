@@ -315,7 +315,7 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 				if(r instanceof Sprited){
 					Sprite s=((Sprited) r).getSprite();
 					if(s instanceof PC_Sprite){
-						((PC_Sprite) s).draw(g, r.getX(), r.getY());
+						((PC_Sprite) s).draw(g, r.getX(), r.getY(),((Sprited) r).getScale());
 					}
 				}else if(r instanceof Drawable){
 					((Drawable) r).draw(pen,x-width/2,y-height/2,width,height);

@@ -1,7 +1,9 @@
 package resources;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -16,6 +18,7 @@ import external.graphics.Sprite;
 
 public class PC_ImageResource extends external.resources.ImageResource{
 	
+	private int imageType=VolatileImage.OPAQUE;
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	GraphicsConfiguration gc;
 	private VolatileImage image;
@@ -29,20 +32,26 @@ public class PC_ImageResource extends external.resources.ImageResource{
 	public PC_ImageResource(String location) throws IOException{
 		File temp=(new File(location));
 		gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-		presistent=ImageIO.read(temp);
-		image=gc.createCompatibleVolatileImage(presistent.getWidth(), presistent.getHeight());
-		image.createGraphics().drawImage(presistent, 0, 0, null);
+		BufferedImage tempi=ImageIO.read(temp);
+		presistent=new BufferedImage(tempi.getWidth(),tempi.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		presistent.getGraphics().drawImage(tempi, 0, 0, null);
+		createImage();
+		redraw();
 		name=temp.getName();
 	}
 	private void ensureImage(){
 		switch(image.validate(gc)){
 		case VolatileImage.IMAGE_INCOMPATIBLE:
-			image=gc.createCompatibleVolatileImage(presistent.getWidth(), presistent.getHeight());
+			createImage();
 		case VolatileImage.IMAGE_RESTORED:
-			image.createGraphics().drawImage(presistent, 0, 0, null);
+			redraw();
 		default:
 			
 		}
+	}
+	@Override
+	public Sprite createSprite(int x, int y, int width, int height,int offsetX, int offsetY) {
+		return new PC_Sprite(x,y,width,height,offsetX,offsetY,this);
 	}
 	
 	@Override
@@ -80,6 +89,42 @@ public class PC_ImageResource extends external.resources.ImageResource{
 	public BufferedImage getImage() {
 		return this.presistent;
 	}
+	@Override
+	public void setTransparent(int xloc, int yloc) {
+		this.imageType=VolatileImage.BITMASK;
+		createImage();
+		
+		int color=presistent.getRGB(xloc, yloc);
+		Graphics2D persistentG=presistent.createGraphics();
+		persistentG.setComposite(AlphaComposite.DstOut);
+		persistentG.setColor(new Color(0xFF0000FF));
+		for (int y = 0; y < presistent.getHeight(); y++) {
+		    for (int x = 0; x < presistent.getWidth(); x++) {
+		    	
+		         int argb = presistent.getRGB(x, y);
+		         
+		         if (argb==color)
+		         {
+		        	 persistentG.fillRect(x, y, 1, 1);
+		         }
+		    }
+		}
+		redraw();
+		
+	}
+	public void redraw(){
+		System.out.println("redrawing");
+		Graphics2D temp=image.createGraphics();
+		temp.setComposite(AlphaComposite.DstOut);
+		
+	    temp.fillRect(0, 0, image.getWidth(), image.getHeight());
+	    temp=image.createGraphics();
+	    temp.drawImage(presistent,0,0,null);
+	}
+	public void createImage(){
+		image=gc.createCompatibleVolatileImage(presistent.getWidth(), presistent.getHeight(),imageType);
+	}
+	
 
 
 

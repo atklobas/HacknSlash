@@ -223,5 +223,9 @@ public class Actor implements Sprited, Observable{
 		// TODO Auto-generated method stub
 		return true;
 	}
+	@Override
+	public double getScale() {
+		return 1;
+	}
 
 }

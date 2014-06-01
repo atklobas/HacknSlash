@@ -6,64 +6,19 @@ public abstract class Sprite{
 	public abstract String getResourceName();
 	public abstract int getResourceID();
 	
-	private int x;
-	private int y;
-	private int width;
-	private int height;
-	int offsetX;
-	int offsetY;
+	public abstract int getSheetX();
+	public abstract int getSheetY();
+	public abstract int getSheetWidth();
+	public abstract int getSheetHeight();
+	public abstract int getOffsetX();
+	public abstract int getOffsetY();
 	
-	public Sprite(int x, int y, int width, int height){
-		this(x,y,width,height,0,0);
-	}
-	
-	public Sprite(int x, int y, int width, int height, int offsetX, int offsetY){
-		this.x=x;
-		this.y=y;
-		this.height=height;
-		this.width=width;
-		this.offsetX=offsetX;
-		this.offsetY=offsetY;
-	}
-	
-	
-	public int getSheetX(){
-		return x;
-	}
-	public int getSheetY(){
-		return y;
-	}
-	public int getSheetWidth(){
-		return width;
-	}
-	public int getSheetHeight(){
-		return height;
-	}
-	public int getOffsetX(){
-		return offsetX;
-	}
-	public int getOffsetY(){
-		return offsetY;
-	}
-	
-	public void setSheetX(int x){
-		this.x=x;
-	}
-	public void setSheetY(int y){
-		this.y=y;
-	}
-	public void setSheetWidth(int width){
-		this.width=width;
-	}
-	public void setSheetHeight(int height){
-		this.height=height;
-	}
-	public void setOffsetX(int xOffset){
-		this.offsetX=xOffset;
-	}
-	public void setOffsetY(int yOffset){
-		this.setOffsetY(yOffset);
-	}
+	public abstract void setSheetX(int x);
+	public abstract void setSheetY(int y);
+	public abstract void setSheetWidth(int width);
+	public abstract void setSheetHeight(int height);
+	public abstract void setOffsetX(int xOffset);
+	public abstract void setOffsetY(int yOffset);
 	public abstract double getDuration();
 	public abstract void setDuration(double dur);
 	
