@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -43,7 +45,9 @@ public class Actor implements Sprited, Observable{
 		tempSprite=sprite;
 		
 	}
-	
+	public void addAnimation(String name, List<Sprite> images, int animationTime){
+		sprite.addAnimation(name, images, animationTime);
+	}
 	
 	
 	
@@ -54,6 +58,8 @@ public class Actor implements Sprited, Observable{
 	double i=.1;
 	double d=.1;
 	double integralMax=maxSpeed*20*1000;
+	Vector2D velocity = new Vector2D();
+	
 	int hitpoints = 100000;
 	int hpregen = 1;
 	int manapoints = 100000;
@@ -64,13 +70,13 @@ public class Actor implements Sprited, Observable{
 	HashMap<String, Attack> attacks = new HashMap<String, Attack>();
 	public static Random rand=new Random();
 	private Vector2D setPoint;
-	private AnimatedSprite sprite;
+	AnimatedSprite sprite;
 	private Faction faction;
 	private HashSet<Effect> effects = new HashSet<Effect>();
 	
 	
 	private Vector2D pos;
-	Vector2D facing;
+	Vector2D facing = new Vector2D();
 	
 	Vector2D tally=new Vector2D();
 	Vector2D previous=new Vector2D();
@@ -107,7 +113,7 @@ public class Actor implements Sprited, Observable{
 	}
 	
 	public Sprite getSprite(){
-		return tempSprite;
+		return sprite.getSprite();
 	}
 	
 	public void damage(int health,int mana, int stamina){
@@ -156,6 +162,8 @@ public class Actor implements Sprited, Observable{
 		this.pos=this.pos.add(trans);
 	}
 	public void progress(int time){
+		
+		
 		sprite.progress(time);
 		progressEffects(time);
 		
@@ -167,7 +175,7 @@ public class Actor implements Sprited, Observable{
 		
 		Vector2D proportion=setPoint.subtract(pos);
 		if(!proportion.equals(Vector2D.ZERO)){
-			this.facing = proportion.scale(1.0/proportion.getLength());
+			//this.facing = proportion.scale(1.0/proportion.getLength());
 		}
 		this.tally=this.tally.add(proportion.scale(time));
 		double intLength=tally.getLength();
@@ -190,7 +198,12 @@ public class Actor implements Sprited, Observable{
 		if(length>maxSpeed){
 			dir=dir.scale(maxSpeed/(length));
 		}
-		this.translate(dir);
+		
+		velocity=dir;
+		if(!velocity.equals(Vector2D.ZERO)){
+			facing=velocity.getUnitVector();
+		}
+		this.translate(velocity);
 		/*if(length==0){
 				
 		}else if(length<=this.maxSpeed){

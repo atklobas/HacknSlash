@@ -2,6 +2,7 @@ package Main;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import mathematics.Vector2D;
 import console.Console;
 import console.Shell;
 import external.graphics.Renderable;
+import external.graphics.Sprite;
 import external.graphics.View;
 import external.io.Command;
 import external.resources.ImageResource;
@@ -58,7 +60,37 @@ public class Game {
 		try {
 			ImageResource ir=loader.LoadImageResource("basic sprites.png");
 			ir.setTransparent(0, 0);
-			player.addSprite(ir.createSprite(0, 0, 24, 34,12,16));
+			//player.addSprite(ir.createSprite(0, 0, 24, 34));
+			Sprite[] sprites = new Sprite[4];
+			sprites[0] = ir.createSprite(24, 0, 24, 32);
+			sprites[1] = ir.createSprite(0, 0, 24, 32);
+			sprites[2] = ir.createSprite(24, 0, 24, 32);
+			sprites[3] = ir.createSprite(48, 0, 24, 32);
+			player.addAnimation("upleft", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 32, 24, 32);
+			sprites[1] = ir.createSprite(0, 32, 24, 32);
+			sprites[2] = ir.createSprite(24, 32, 24, 32);
+			sprites[3] = ir.createSprite(48, 32, 24, 32);
+			player.addAnimation("upright", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 64, 24, 32);
+			sprites[1] = ir.createSprite(0, 64, 24, 32);
+			sprites[2] = ir.createSprite(24, 64, 24, 32);
+			sprites[3] = ir.createSprite(48, 64, 24, 32);
+			player.addAnimation("downright", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 96, 24, 32);
+			sprites[1] = ir.createSprite(0, 96, 24, 32);
+			sprites[2] = ir.createSprite(24, 96, 24, 32);
+			sprites[3] = ir.createSprite(48, 96, 24, 32);
+			player.addAnimation("downleft", Arrays.asList(sprites), 500);
+			sprites = new Sprite[1];
+			sprites[0] = ir.createSprite(24, 0, 24, 32);
+			player.addAnimation("upleftstanding", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 32, 24, 32);
+			player.addAnimation("uprightstanding", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 64, 24, 32);
+			player.addAnimation("downrightstanding", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 96, 24, 32);
+			player.addAnimation("downleftstanding", Arrays.asList(sprites), 500);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -5,6 +5,7 @@ import external.graphics.Sprite;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -12,6 +13,7 @@ public class AnimatedSprite{
 
 	private HashMap<String, Animation> animations;
 	private Animation currentAnimation;
+	private boolean loop = true;
 	
 	
 	public AnimatedSprite(){
@@ -22,7 +24,7 @@ public class AnimatedSprite{
 		return animations.keySet();
 	}
 	
-	public void addAnimation(String name, LinkedList<Sprite> images, int animationTime){
+	public void addAnimation(String name, List<Sprite> images, int animationTime){
 		animations.put(name, new Animation(images, animationTime));
 	}
 	
@@ -36,8 +38,10 @@ public class AnimatedSprite{
 		if(a==null){
 			return false;
 		}
-		currentAnimation = a;
-		currentAnimation.restart();
+		if(!a.equals(currentAnimation)){
+			currentAnimation = a;
+			currentAnimation.restart();
+		}
 		return true;
 	}
 	public void progress(int time){
@@ -51,42 +55,43 @@ public class AnimatedSprite{
 	
 	private class Animation{
 		
-		LinkedList<Frame> frames;
+		LinkedList<Frame> frames = new LinkedList<Frame>();
 		int size;
 		int animationTime = 1000; //in milliseconds
 		int currentTime = 0;
 		Frame currentFrame;
 		Iterator<Frame> itr;
+		long hash;
 		
-		public Animation(LinkedList<Sprite> images, int animationTime){
-			makeFrames(images);
-			this.animationTime=animationTime;
+		public Animation(List<Sprite> images, int animationTime){
 			size=images.size();
-			
+			this.animationTime=animationTime;
+			makeFrames(images);
+			hash=System.currentTimeMillis();
 		}
 		
-		public void makeFrames(LinkedList<Sprite> sprites){
+		public void makeFrames(List<Sprite> sprites){
 			int frameTime = animationTime/size;
 			for(Sprite s:sprites){
 				frames.add(new Frame(s, frameTime));
 			}
 			itr = frames.iterator();
+			currentFrame=itr.next();
 		}
 		
 		public void progress(int time){
-			time -= currentTime;
-			while(time>0){
-				if(!itr.hasNext()){
-					itr = frames.iterator();
-				}
-				currentFrame=itr.next();
-				time = currentFrame.progress(time);
+			int remainingTime = currentFrame.progress(time);
+			currentTime-=time;
+			if(remainingTime>0){
+				return;
+			}else if((currentTime<0 || !itr.hasNext()) && loop){
+				restart();
 			}
-			currentTime = time;
+			currentFrame=itr.next();
 		}
 		public void restart(){
-			currentTime=0;
 			itr=frames.iterator();
+			currentTime=animationTime;
 		}
 		public Sprite getSprite(){
 			return currentFrame.getSprite();
@@ -104,7 +109,8 @@ public class AnimatedSprite{
 				return sprite;
 			}
 			public int progress(int time){
-				return time-this.time;
+				this.time-=time;
+				return this.time;
 			}
 		}
 	}
