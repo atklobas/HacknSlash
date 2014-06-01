@@ -37,6 +37,7 @@ import java.awt.image.VolatileImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,8 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 		
 		this.setPreferredSize(new Dimension(width, height));
 	}
-	VolatileImage image;
+	int currentImage=1;
+	VolatileImage[] image=new VolatileImage[4];
 	VolatileImage glassPane;
 	Graphics2D g;
 	Graphics2D gg;
@@ -98,8 +100,8 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 	public void paint(Graphics g){
 		this.requestFocus();
 		
-		
-		for(InternalFrame f:frames){
+		//TODO add brafebuffer
+		/*for(InternalFrame f:frames){
 			if(image!=null){
 				
 			Graphics toSend=image.createGraphics();
@@ -107,8 +109,8 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 			toSend.setClip(0, 0, f.getWidth(), f.getHeight());
 			f.paint(toSend);
 			}
-		}
-		g.drawImage(image, 0, 0, this);
+		}/**/
+		g.drawImage(image[(currentImage-1)%image.length], 0, 0, this);
 		g.drawImage(glassPane, 0, 0, this);
 		
 	}
@@ -120,7 +122,7 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 		VolatileImage ret= GraphicsEnvironment.getLocalGraphicsEnvironment().
 	        getDefaultScreenDevice().getDefaultConfiguration().
 	        createCompatibleVolatileImage(width, height, Transparency.TRANSLUCENT);
-		 Graphics2D g = ret.createGraphics();
+		 	Graphics2D g = ret.createGraphics();
 		    g.setComposite(AlphaComposite.DstOut);
 		    g.fillRect(0, 0, ret.getWidth(), ret.getHeight());
 		    g.dispose();
@@ -275,14 +277,17 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 		g2.fillRect(0,0,width,height);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
 	}
-	
-
+	LinkedList<Long> times= new LinkedList<Long>();
+	double frameRate=0;
 	public void render(List<Renderable> rendered, int x, int y) {
-		if(g==null){
-			image=this.createVolatileImage(width, height);
-			g=image.createGraphics();
-			pen=new PC_Pen(g);
+		
+		if(image[currentImage%image.length]==null){
+			image[currentImage%image.length]=this.createVolatileImage(width, height);
 		}
+		
+		g=image[currentImage%image.length].createGraphics();
+		pen=new PC_Pen(g);
+		
 		if(g!=null){
 			g.setTransform(id);
 			
@@ -290,7 +295,7 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 			g.fillRect(0, 0, width, height);
 			clear(gg);
 			gg.setColor(Color.BLACK);
-			gg.drawString("time: "+System.currentTimeMillis(), 0, 12);
+			gg.drawString("frameRate: "+frameRate, 0, 12);
 			g.translate(-x+width/2, -y+height/2);
 			
 			//int xx=(int)center.getElement(0)-width/2;
@@ -307,8 +312,18 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 				}
 			}
 		}
-		this.repaint();
+		currentImage++;
 		
+		
+	}
+	public void display(){
+		times.add(System.currentTimeMillis());
+		if(times.size()>10){
+			
+			frameRate=(times.getLast()-times.getFirst())/((double)times.size()-1);
+			times.removeFirst();
+		}
+		this.repaint();
 	}
 		
 }

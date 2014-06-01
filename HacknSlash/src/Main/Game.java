@@ -135,6 +135,7 @@ public class Game {
 					itr.remove();
 				}
 			}
+			
 	}
 	
 	private void render(){
@@ -143,6 +144,7 @@ public class Game {
 			this.newRendered.clear();
 		}
 		view.render(rendered,player.getX(),player.getY());
+		view.display();
 	}
 	
 	
