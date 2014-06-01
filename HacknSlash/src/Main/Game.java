@@ -58,7 +58,7 @@ public class Game {
 		
 		
 		try {
-			ImageResource ir=loader.LoadImageResource("basic sprites.png");
+			ImageResource ir=loader.LoadImageResource("basic sprites2.png");
 			ir.setTransparent(0, 0);
 			//player.addSprite(ir.createSprite(0, 0, 24, 34));
 			Sprite[] sprites = new Sprite[4];

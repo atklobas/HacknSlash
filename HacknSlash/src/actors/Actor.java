@@ -238,7 +238,7 @@ public class Actor implements Sprited, Observable{
 	}
 	@Override
 	public double getScale() {
-		return 1;
+		return 5;
 	}
 
 }

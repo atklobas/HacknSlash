@@ -14,7 +14,7 @@ public class Player extends Actor{
 	
 	public Player(int x, int y){
 		super(new Vector2D(x,y));
-		this.setSpeed(3.);
+		this.setSpeed(5.);
 		this.setPid(.5, .00, .1);
 		
 	}
@@ -22,13 +22,13 @@ public class Player extends Actor{
 	public void progress(int time){
 		if(facing.getX()>0){
 			if(facing.getY()>0){
-				if(velocity.equals(Vector2D.ZERO)){
+				if(velocity.getLength()<.5){
 					sprite.animate("downrightstanding");
 				}else{
 					sprite.animate("downright");
 				}
 			}else{
-				if(velocity.equals(Vector2D.ZERO)){
+				if(velocity.getLength()<.5){
 					sprite.animate("uprightstanding");
 				}else{
 					sprite.animate("upright");
@@ -36,13 +36,13 @@ public class Player extends Actor{
 			}
 		}else{
 			if(facing.getY()>0){
-				if(velocity.equals(Vector2D.ZERO)){
+				if(velocity.getLength()<.5){
 					sprite.animate("downleftstanding");
 				}else{
 					sprite.animate("downleft");
 				}
 			}else{
-				if(velocity.equals(Vector2D.ZERO)){
+				if(velocity.getLength()<.5){
 					sprite.animate("upleftstanding");
 				}else{
 					sprite.animate("upleft");
