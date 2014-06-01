@@ -81,6 +81,15 @@ public class Game {
 			sprites[2] = ir.createSprite(24, 96, 24, 32);
 			sprites[3] = ir.createSprite(48, 96, 24, 32);
 			player.addAnimation("downleft", Arrays.asList(sprites), 500);
+			sprites = new Sprite[1];
+			sprites[0] = ir.createSprite(24, 0, 24, 32);
+			player.addAnimation("upleftstanding", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 32, 24, 32);
+			player.addAnimation("uprightstanding", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 64, 24, 32);
+			player.addAnimation("downrightstanding", Arrays.asList(sprites), 500);
+			sprites[0] = ir.createSprite(24, 96, 24, 32);
+			player.addAnimation("downleftstanding", Arrays.asList(sprites), 500);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

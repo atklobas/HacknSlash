@@ -200,7 +200,9 @@ public class Actor implements Sprited, Observable{
 		}
 		
 		velocity=dir;
-		facing=velocity.getUnitVector();
+		if(!velocity.equals(Vector2D.ZERO)){
+			facing=velocity.getUnitVector();
+		}
 		this.translate(velocity);
 		/*if(length==0){
 				

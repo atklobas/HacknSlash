@@ -38,7 +38,10 @@ public class AnimatedSprite{
 		if(a==null){
 			return false;
 		}
-		currentAnimation = a;
+		if(!a.equals(currentAnimation)){
+			currentAnimation = a;
+			currentAnimation.restart();
+		}
 		return true;
 	}
 	public void progress(int time){
@@ -58,11 +61,13 @@ public class AnimatedSprite{
 		int currentTime = 0;
 		Frame currentFrame;
 		Iterator<Frame> itr;
+		long hash;
 		
 		public Animation(List<Sprite> images, int animationTime){
 			size=images.size();
 			this.animationTime=animationTime;
 			makeFrames(images);
+			hash=System.currentTimeMillis();
 		}
 		
 		public void makeFrames(List<Sprite> sprites){
@@ -75,17 +80,18 @@ public class AnimatedSprite{
 		}
 		
 		public void progress(int time){
+			int remainingTime = currentFrame.progress(time);
 			currentTime-=time;
-			while(currentTime<0){
-				if(!itr.hasNext()){
-					this.restart();
-				}
-				currentTime=animationTime+currentTime;
-				currentFrame=itr.next();
+			if(remainingTime>0){
+				return;
+			}else if((currentTime<0 || !itr.hasNext()) && loop){
+				restart();
 			}
+			currentFrame=itr.next();
 		}
 		public void restart(){
 			itr=frames.iterator();
+			currentTime=animationTime;
 		}
 		public Sprite getSprite(){
 			return currentFrame.getSprite();
@@ -103,7 +109,8 @@ public class AnimatedSprite{
 				return sprite;
 			}
 			public int progress(int time){
-				return time-this.time;
+				this.time-=time;
+				return this.time;
 			}
 		}
 	}

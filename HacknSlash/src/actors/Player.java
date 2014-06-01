@@ -22,15 +22,31 @@ public class Player extends Actor{
 	public void progress(int time){
 		if(facing.getX()>0){
 			if(facing.getY()>0){
-				sprite.animate("downright");
+				if(velocity.equals(Vector2D.ZERO)){
+					sprite.animate("downrightstanding");
+				}else{
+					sprite.animate("downright");
+				}
 			}else{
-				sprite.animate("upright");
+				if(velocity.equals(Vector2D.ZERO)){
+					sprite.animate("uprightstanding");
+				}else{
+					sprite.animate("upright");
+				}
 			}
 		}else{
 			if(facing.getY()>0){
-				sprite.animate("downleft");
+				if(velocity.equals(Vector2D.ZERO)){
+					sprite.animate("downleftstanding");
+				}else{
+					sprite.animate("downleft");
+				}
 			}else{
-				sprite.animate("upleft");
+				if(velocity.equals(Vector2D.ZERO)){
+					sprite.animate("upleftstanding");
+				}else{
+					sprite.animate("upleft");
+				}
 			}
 		}
 		super.progress(time);
