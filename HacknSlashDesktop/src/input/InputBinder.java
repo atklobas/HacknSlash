@@ -4,14 +4,15 @@ import java.util.EnumMap;
 import java.util.HashMap;
 
 import external.io.Command;
+import external.io.PlayerCommand;
 
 public class InputBinder {
-	HashMap<Integer,Command> map= new HashMap<Integer,Command>();
+	HashMap<Integer,PlayerCommand> map= new HashMap<Integer,PlayerCommand>();
 	
-	public Command getCommand(int i){
+	public PlayerCommand getCommand(int i){
 		return map.get(i);
 	}
-	public void bind(int i, Command c){
+	public void bind(int i, PlayerCommand c){
 		map.put(i, c);
 	}
 

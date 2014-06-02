@@ -55,7 +55,7 @@ public class Actor implements Sprited, Observable{
 	
 	private double maxSpeed=5;
 	double p=.3;
-	double i=.1;
+	double i=0;
 	double d=.1;
 	double integralMax=maxSpeed*20*1000;
 	Vector2D velocity = new Vector2D();
@@ -270,6 +270,19 @@ public class Actor implements Sprited, Observable{
 	@Override
 	public double getScale() {
 		return 5;
+	}
+	private enum Direction{
+		NORTH,
+		NORTH_EAST,
+		EAST,
+		SOUTHEAST,
+		SOUTH,
+		SOUTHWEST,
+		WEST,
+		NORTH_WEST
+	}
+	public Direction getFacing(){
+		return Direction.NORTH;
 	}
 
 }

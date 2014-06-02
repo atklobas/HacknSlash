@@ -1,11 +1,12 @@
 package external.io.commands;
 
 import external.io.Command;
+import external.io.PlayerCommand;
 import external.io.PointerLocation;
 import mathematics.Vector2D;
 import actors.Actor;
 
-public class Move extends Command {
+public class Move extends PlayerCommand {
 	boolean isActive=false;
 	
 	public Move(PointerLocation pointer) {

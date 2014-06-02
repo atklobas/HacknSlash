@@ -20,6 +20,8 @@ import external.resources.ResourceLoader;
 import Map.World;
 import actors.Actor;
 import actors.Player;
+import ai.AI;
+import ai.Wanderer;
 import attacks.Attack;
 
 public class Game {
@@ -36,6 +38,7 @@ public class Game {
 	
 	private int maxRate=20;
 	
+	private LinkedList<AI> ais=new LinkedList<AI>();
 	private LinkedList<Actor> actors=new LinkedList<Actor>();
 	private LinkedList<Actor> newActors=new LinkedList<Actor>();
 	private LinkedList<Attack> attacks=new LinkedList<Attack>();
@@ -49,16 +52,28 @@ public class Game {
 	public Game(Shell c, View v, ResourceLoader loader){
 		this.shell=c;
 		this.view=v;
+		AI.setModel(this);
 		world=new World(loader);
 		rendered.add(world);
 		player=new Player(000, 000);
 		rendered.add(player);
 		actors.add(player);
 		AnimationLoader al=new AnimationLoader(loader);
-		
-		
-		
 		try {
+			long time=System.currentTimeMillis();
+		for(int i=0;i<10;i++){
+			Actor zombie=new Actor(new Vector2D(rand.nextInt(500)-250,rand.nextInt(500)-250));
+			zombie.setSpeed(2.);
+			al.addAntimation(zombie, "ZombieSprite.txt");
+			ais.add(new Wanderer(zombie));
+			this.addActor(zombie);
+		}
+		System.out.println(System.currentTimeMillis()-time);
+		
+		
+		
+		
+		
 			al.addAntimation(player, "PlayerSprite.txt");
 			/*ImageResource ir=loader.LoadImageResource("basic sprites2.png");
 			ir.setTransparent(0, 0);
@@ -131,6 +146,9 @@ public class Game {
 	}
 	
 	private void input() {
+		for(AI ai:ais){
+			ai.think();
+		}
 		synchronized(this){
 			commands.addAll(newCommands);
 			newCommands.clear();

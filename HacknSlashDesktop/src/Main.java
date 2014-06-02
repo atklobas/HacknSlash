@@ -22,6 +22,7 @@ import console.ConsoleListener;
 import console.Shell;
 import console.ShellProgram;
 import external.io.Command;
+import external.io.PlayerCommand;
 import external.io.PointerLocation;
 import external.io.commands.Move;
 import Main.Game;
@@ -90,7 +91,7 @@ public class Main implements MouseListener, MouseMotionListener {
 
 	public void mousePressed(MouseEvent e) {
 		this.updatePointer(e);
-		Command temp=binder.getCommand(e.getButton());
+		PlayerCommand temp=binder.getCommand(e.getButton());
 		temp.held(true);
 		game.addCommand(temp);
 
@@ -98,7 +99,7 @@ public class Main implements MouseListener, MouseMotionListener {
 
 	public void mouseReleased(MouseEvent e) {
 		this.updatePointer(e);
-		Command temp=binder.getCommand(e.getButton());
+		PlayerCommand temp=binder.getCommand(e.getButton());
 		temp.held(false);
 
 	}
