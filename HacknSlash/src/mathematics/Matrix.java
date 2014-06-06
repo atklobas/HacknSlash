@@ -47,8 +47,8 @@ public class Matrix {
 	 * example:
 	 * new double[][]
 	 * {
-	 *  {1,2,3}
-	 *  {4,5,6}
+	 *  {1,2,3},
+	 *  {4,5,6},
 	 *  {7,8,9}
 	 * }
 	 */
@@ -69,6 +69,7 @@ public class Matrix {
 	 * @param matrix a prebuild matrix to be copied
 	 */
 	public Matrix(double [][] matrix){
+		this.matrix=new double[matrix.length][matrix[0].length];
 		columns=matrix[0].length;
 		rows=matrix.length;
 		for(int i=0;i<rows;i++){
@@ -150,18 +151,73 @@ public class Matrix {
 		}
 	}
 	@SuppressWarnings("unused")
-	private void scaleRow(int row, double scaler){
-		throw new UnsupportedOperationException("scale row not yet supported");
+	private void scaleRow(int row, double scalar){
+		for(int i=0; i<columns; i++){
+			this.matrix[row][i] *= scalar;
+		}
 	}
 	@SuppressWarnings("unused")
-	private void scaleAndAdd(int from, int to, double scaler){
-		throw new UnsupportedOperationException("scaleandmove row not yet supported");
+	private void scaleAndAdd(int from, int to, double scalar){
+		for(int i=0; i<columns; i++){
+			this.matrix[to][i] += this.matrix[from][i] * scalar;
+		}
 	}
 	@SuppressWarnings("unused")
-	private void moveRow(int from, int to){
-		throw new UnsupportedOperationException("moverow row not yet supported");
+	private void swapRows(int a, int b){
+		double[] row = this.matrix[a];
+		this.matrix[a]=this.matrix[b];
+		this.matrix[b]=row;
+	}
+	
+	
+	public Matrix rref(){
+		Matrix m = new Matrix(this.matrix);
+		
+		for(int j=0; j<columns; j++){
+			for(int i=j; i<rows; i++){
+				if(m.matrix[i][j]!=0){
+					m.swapRows(j, i);
+					break;
+				}
+			}
+			if(m.matrix[j][j]!=1 && m.matrix[j][j]!=0){
+				m.scaleRow(j, 1.0/m.matrix[j][j]);
+			}
+			for(int i=j+1; i<rows; i++){
+				if(m.matrix[i][j]!=0){
+					m.scaleAndAdd(j, i, -m.matrix[i][j]);
+				}
+			}
+		}
+		for(int i=0; i<rows; i++){
+			for(int j=i+1; j<columns; j++){
+				if(m.matrix[i][j]!=0){
+					m.scaleAndAdd(j, i, -m.matrix[i][j]);
+				}
+			}
+		}
+		
+		
+		return m;
+	}
+	
+	/*
+	public static void main (String[] args){
+		double[][] derp =  new double[][]
+				  {
+			   {1,1,0},
+			   {1,2,1},
+			   {0,1,1}
+			  };
+		Matrix m = new Matrix(derp);
+		System.out.println(m+"\n");
+		System.out.println(m.rref());
 		
 	}
+	*/
+	
+	
+	
 	public String toString(){
 		String ret="";
 		for(double[] str: this.matrix){
