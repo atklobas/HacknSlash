@@ -172,8 +172,10 @@ public class Matrix {
 	
 	public Matrix rref(){
 		Matrix m = new Matrix(this.matrix);
+		int pivots = Math.min(m.columns, m.rows);
 		
-		for(int j=0; j<columns; j++){
+		
+		for(int j=0; j<pivots; j++){
 			for(int i=j; i<rows; i++){
 				if(m.matrix[i][j]!=0){
 					m.swapRows(j, i);
@@ -189,8 +191,8 @@ public class Matrix {
 				}
 			}
 		}
-		for(int i=0; i<rows; i++){
-			for(int j=i+1; j<columns; j++){
+		for(int i=0; i<pivots; i++){
+			for(int j=i+1; j<pivots; j++){
 				if(m.matrix[i][j]!=0){
 					m.scaleAndAdd(j, i, -m.matrix[i][j]);
 				}
@@ -205,9 +207,9 @@ public class Matrix {
 	public static void main (String[] args){
 		double[][] derp =  new double[][]
 				  {
-			   {1,1,0},
-			   {1,2,1},
-			   {0,1,1}
+			   {1,1,5},
+			   {1,2,6},
+			   {2,5,7}
 			  };
 		Matrix m = new Matrix(derp);
 		System.out.println(m+"\n");
