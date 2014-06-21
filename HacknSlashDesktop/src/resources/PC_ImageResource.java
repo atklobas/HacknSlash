@@ -1,5 +1,6 @@
 package resources;
 
+import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.ImageCapabilities;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
@@ -18,7 +20,9 @@ import external.graphics.Sprite;
 
 public class PC_ImageResource extends external.resources.ImageResource{
 	
+	private boolean accelerated;
 	private int imageType=VolatileImage.OPAQUE;
+	private ImageCapabilities caps=new ImageCapabilities(true);
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	GraphicsConfiguration gc;
 	private VolatileImage image;
@@ -78,13 +82,22 @@ public class PC_ImageResource extends external.resources.ImageResource{
 	}
 
 	public void draw(Graphics g, PC_Sprite s, int x, int y, int width, int height) {
-		ensureImage();
+		
 		//don't even worry about it... really
-		g.drawImage(image,x,y,x+width,y+height,s.x,s.y,s.x+s.width,s.y+s.height,null);
+		if(this.accelerated){
+			ensureImage();
+			g.drawImage(image,x,y,x+width,y+height,s.x,s.y,s.x+s.width,s.y+s.height,null);
+		}else;
+			g.drawImage(presistent,x,y,x+width,y+height,s.x,s.y,s.x+s.width,s.y+s.height,null);
 		
 	}
 	public void draw(Graphics g, PC_Sprite s,int x, int y) {
-		draw(g,s,x,y,s.width,s.height);
+		//don't even worry about it... really
+		if(this.accelerated){
+			ensureImage();
+			//g.drawImage(image,s.x,s.y,s.x+s.width,s.y+s.height,null);
+		}else;
+			//g.drawImage(presistent,s.x,s.y,s.x+s.width,s.y+s.height,null);
 	}
 	public BufferedImage getImage() {
 		return this.presistent;
@@ -113,16 +126,24 @@ public class PC_ImageResource extends external.resources.ImageResource{
 		
 	}
 	public void redraw(){
+		if(image!=null){
 		Graphics2D temp=image.createGraphics();
 		temp.setComposite(AlphaComposite.DstOut);
 		
 	    temp.fillRect(0, 0, image.getWidth(), image.getHeight());
 	    temp=image.createGraphics();
 	    temp.drawImage(presistent,0,0,null);
+		}
 	}
 	public void createImage(){
-		System.out.println("creating new volitile image()");
-		image=gc.createCompatibleVolatileImage(presistent.getWidth(), presistent.getHeight(),imageType);
+		//System.out.println("creating new volitile image()");
+		try {
+			this.accelerated=true;
+			image=gc.createCompatibleVolatileImage(presistent.getWidth(), presistent.getHeight(),caps,imageType);
+		} catch (AWTException e) {
+			this.accelerated=false;
+			//System.err.println("could not create accelerated image"+e.getMessage());
+		}
 	}
 	
 

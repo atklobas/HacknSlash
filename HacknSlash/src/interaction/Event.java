@@ -1,5 +1,5 @@
 package interaction;
 
-public enum Event {
+public interface Event {
 
 }

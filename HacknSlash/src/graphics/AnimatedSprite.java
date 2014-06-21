@@ -2,6 +2,7 @@ package graphics;
 
 import external.graphics.Sprite;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,11 +12,46 @@ import java.util.Set;
 
 public class AnimatedSprite{
 
-	private HashMap<String, Animation> animations;
-	private Animation currentAnimation;
+	//private HashMap<String, Animation> animations;
+	//private Animation currentAnimation;
 	private boolean loop = true;
 	
+	ArrayList<Frame> frames=new ArrayList<Frame>();
+	int totalTime=0;
+	public void addSprite(Sprite s, int length){
+		totalTime+=length;
+		frames.add(new Frame(s,length));
+	}
+	public Sprite getSprite(int time){
+		for(Frame f:frames){
+			time-=f.time;
+			if(time<0){
+				return f.sprite;
+			}
+		}
+		return frames.get(0).sprite;
+	}
+	public int getTotalTime(){
+		return this.totalTime;
+	}
 	
+	
+	
+	private class Frame{
+		Sprite sprite;
+		private int time;
+		
+		public Frame(Sprite sprite, int time){
+			this.sprite=sprite;
+			this.time=time;
+		}
+		public Sprite getSprite(){
+			return sprite;
+		}
+	}
+	
+	
+	/*
 	public AnimatedSprite(){
 		animations = new HashMap<String, Animation>();
 	}
@@ -96,28 +132,7 @@ public class AnimatedSprite{
 			return currentFrame.getSprite();
 		}
 		
-		
-		private class Frame{
-			Sprite sprite;
-			private int time;
-			public int currentTime;
-			
-			public Frame(Sprite sprite, int time){
-				this.sprite=sprite;
-				this.time=time;
-				currentTime=time;
-			}
-			public Sprite getSprite(){
-				return sprite;
-			}
-			public int progress(int time){
-				this.currentTime-=time;
-				return this.currentTime;
-			}
-			public void restart(){
-				this.currentTime=time;
-			}
-		}
-	}
+		/**/
+	
 
 }

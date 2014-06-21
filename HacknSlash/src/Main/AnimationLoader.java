@@ -12,39 +12,60 @@ import actors.Actor;
 import external.graphics.Sprite;
 import external.resources.ImageResource;
 import external.resources.ResourceLoader;
+import graphics.AnimatedSprite;
+import graphics.AnimationList;
+import graphics.AnimationPointer;
+import graphics.Direction;
+import graphics.Action;
 
 public class AnimationLoader {
 	ResourceLoader loader;
-	private HashMap<String, ImageResource> map;
+	private HashMap<String, ImageResource> imageMap;
+	private HashMap<String, AnimationList> animationMap;
 	public AnimationLoader(ResourceLoader loader){
 		this.loader=loader;
-		map= new HashMap<String, ImageResource>();
+		imageMap= new HashMap<String, ImageResource>();
+		animationMap= new HashMap<String, AnimationList>();
 	}
-	public void addAntimation(Actor a, String loc) throws IOException{
+	
+	
+	
+	public void addAntimation(String loc) throws IOException{
 		BufferedReader reader=loader.LoadTextResource(loc).getReader();
-		
 		Scanner test=new Scanner(reader);
 		String imageName=test.nextLine().trim();
-		ImageResource ir=map.get(imageName);
+		ImageResource ir=imageMap.get(imageName);
 		if(ir==null){
 			ir=loader.LoadImageResource(imageName);
-			map.put(imageName, ir);
+			ir.setTransparent(0, 0);
+			imageMap.put(imageName, ir);
 		}
-		ir.setTransparent(0, 0);
+		AnimationList animation=new AnimationList();
+		
+		
 		while(test.hasNext()){
 			test.nextLine();
-			String animationName=test.nextLine().trim();
-			LinkedList<Sprite> sprites=new LinkedList<Sprite>();
+			Direction d=Direction.fromString(test.next());
+			Action a=Action.fromString(test.nextLine().trim());
+			AnimatedSprite s=new AnimatedSprite();
 			while(test.hasNextInt()){
-				sprites.add(createSprite(test.nextLine(),ir));
+				s.addSprite(createSprite(test.nextLine(),ir), 150);
 			}
-			a.addAnimation(animationName, sprites, 500);
+			animation.addAnimation(a, d, s);
 		}
+		this.animationMap.put(loc, animation);
+		test.close();
 	}
 	private Sprite createSprite(String s, ImageResource ir){
 		Scanner temp=new Scanner(s);
-		
 		return ir.createSprite(temp.nextInt(), temp.nextInt(), temp.nextInt(), temp.nextInt(), temp.nextInt(), temp.nextInt());
+	}
+
+
+
+	public AnimationPointer getAnimationList(String string) {
+		// TODO Auto-generated method stub
+		return new AnimationPointer(this.animationMap.get(string));
 	}
 	
 

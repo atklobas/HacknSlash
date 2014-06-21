@@ -18,4 +18,7 @@ public class PointerLocation {
 	public int getY(){
 		return this.y;
 	}
+	public String toString(){
+		return "("+this.x+","+this.y+")";
+	}
 }

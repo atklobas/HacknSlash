@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>HacknSlash</name>
+	<name>HacknSlashJLWGL</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Resouces</name>
-			<type>2</type>
-			<location>C:/Users/atklobas/workspace/HacknSlash/Resouces</location>
-		</link>
-	</linkedResources>
 </projectDescription>

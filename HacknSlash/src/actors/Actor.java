@@ -22,7 +22,10 @@ import attacks.Effect;
 import Map.Map;
 import mathematics.Vector;
 import mathematics.Vector2D;
+import graphics.Action;
 import graphics.AnimatedSprite;
+import graphics.AnimationPointer;
+import graphics.Direction;
 
 public class Actor implements Sprited, Observable{
 	private ArrayList<Observer> observers=new ArrayList<Observer>();
@@ -35,31 +38,23 @@ public class Actor implements Sprited, Observable{
 	public void notify(Event e){
 		//XXX possibly add Dedicated thread for all actors
 		for(Observer o:this.observers){
-			o.onNotify(e);
+			o.event(e);
 		}
 	}
 	
-	Sprite tempSprite=null;
-	
-	public void addSprite(Sprite sprite) {
-		tempSprite=sprite;
-		
-	}
-	public void addAnimation(String name, List<Sprite> images, int animationTime){
-		sprite.addAnimation(name, images, animationTime);
-	}
 	
 	
-	
-	
-	
-	private double maxSpeed=5;
-	double p=.3;
+	//AnimatedSprite sprite;
+	AnimationPointer animation;
+	//1/10 a meter per second
+	private double standingSpeed=16*3/5000.;
+	private double maxSpeed;
+	double p=.01;
 	double i=0;
 	double d=.1;
 	double integralMax=maxSpeed*20*1000;
 	Vector2D velocity = new Vector2D();
-	
+	boolean standing = true;
 	int hitpoints = 100000;
 	int hpregen = 1;
 	int manapoints = 100000;
@@ -70,16 +65,26 @@ public class Actor implements Sprited, Observable{
 	HashMap<String, Attack> attacks = new HashMap<String, Attack>();
 	public static Random rand=new Random();
 	private Vector2D setPoint;
-	AnimatedSprite sprite;
+	
 	private Faction faction;
 	private HashSet<Effect> effects = new HashSet<Effect>();
-	
-	
 	private Vector2D pos;
 	Vector2D facing = new Vector2D();
 	
 	Vector2D tally=new Vector2D();
 	Vector2D previous=new Vector2D();
+	
+	
+	public Actor(Vector2D pos, AnimationPointer animation, double radius){
+		this.pos=pos;
+		this.setPoint=this.getPos();
+		this.animation=animation;
+		this.radius=radius;
+		this.setSpeed(.8);
+	}
+	
+	
+	
 	public void setPid(double p, double i, double d){
 		this.p=p;
 		this.i=i;
@@ -100,6 +105,7 @@ public class Actor implements Sprited, Observable{
 	}
 	
 	public void progressEffects(int time){
+		
 		synchronized(this){
 			
 			for(Iterator<Effect> itr=effects.iterator();itr.hasNext();){
@@ -113,7 +119,7 @@ public class Actor implements Sprited, Observable{
 	}
 	
 	public Sprite getSprite(){
-		return sprite.getSprite();
+		return this.animation.getSprite();
 	}
 	
 	public void damage(int health,int mana, int stamina){
@@ -133,16 +139,17 @@ public class Actor implements Sprited, Observable{
 	}
 	
 	
-	public Actor(Vector2D pos){
-		this.pos=pos;
-		this.setPoint=this.getPos();
-		sprite = new AnimatedSprite();
-	}
+	
 	public void setSetPoint(Vector2D v){
 		this.setPoint=v;
 	}
-	public void setSpeed(Double d){
-		this.maxSpeed=d;
+	/**
+	 * sets speed in meters per second, where 1 meter is 16*3 pixels
+	 * @param d
+	 */
+	public void setSpeed(double d){
+		
+		this.maxSpeed=d*16*3/1000.;
 	}
 	public Vector2D getSetPoint(){
 		return this.setPoint;
@@ -164,85 +171,70 @@ public class Actor implements Sprited, Observable{
 	
 	
 	private void animateSprite(){
-		Vector2D north = new Vector2D(0,-1);
-		double angle = Math.toDegrees(facing.getAngle(north));
-		boolean standing = velocity.getLength()<0.5;
+		Direction d= this.getFacing(this.animation.avaliableDirections());
+		//System.out.println(velocity.getLength());
 		
-		if(angle<45){
-			if(standing){
-				sprite.animate("upstanding");
-			}else
-			sprite.animate("up");
-		}else if(angle>135){
-			if(standing){
-				sprite.animate("downstanding");
-			}else
-			sprite.animate("down");
-		}else if(facing.getX()>0){
-			if(standing){
-				sprite.animate("rightstanding");
-			}else
-			sprite.animate("right");
+		
+		if(standing){
+			animation.setAction(Action.STANDING, d);
 		}else{
-			if(standing){
-				sprite.animate("leftstanding");
-			}else
-			sprite.animate("left");
+			animation.setAction(Action.MOVING, d);
 		}
 	}
 	
 	
 	public void progress(int time){
 		animateSprite();
-		
-		sprite.progress(time);
+		animation.progress(time);
 		progressEffects(time);
 		
 		hitpoints += hpregen*time;
 		manapoints += manaregen*time;
 		staminapoints += staminaregen*time;
-		
+		move(time);
 	
 		
-		Vector2D proportion=setPoint.subtract(pos);
-		if(!proportion.equals(Vector2D.ZERO)){
-			//this.facing = proportion.scale(1.0/proportion.getLength());
-		}
-		this.tally=this.tally.add(proportion.scale(time));
-		double intLength=tally.getLength();
-		
-		if(intLength>integralMax){
-			this.tally=tally.scale(integralMax/(intLength));
-		}
-		proportion=proportion.scale(p);
-		Vector2D derivative=this.getPos().subtract(this.previous);
-		derivative=derivative.scale(d);
+	}
+	private void move(int time){
 		this.previous=this.getPos();
 		
+		double maxSpeed=this.maxSpeed*time;
+		
+		//calculate pid values
+		Vector2D proportion=setPoint.subtract(pos);
+		this.tally=this.tally.add(proportion.scale(time));
+		double intLength=tally.getLength();
+		if(intLength>integralMax){this.tally=tally.scale(integralMax/(intLength));}
+		Vector2D derivative=this.getPos().subtract(this.previous);
+		
+		//scale by pid 
+		proportion=proportion.scale(p);
+		derivative=derivative.scale(d);
 		Vector2D integral=tally.scale(i);
 		
 		
-		//Vector2D dir=this.setPoint.subtract(this.getPos());
-		Vector2D dir=integral.add(proportion).subtract(derivative);
+		velocity=integral.add(proportion).subtract(derivative);
+		
+		Vector2D dir=velocity.scale(time);
 		double length=dir.getLength();
 		
 		if(length>maxSpeed){
 			dir=dir.scale(maxSpeed/(length));
+			
 		}
 		
-		velocity=dir;
-		if(!velocity.equals(Vector2D.ZERO)){
+		
+		if(velocity.getLength()>this.standingSpeed){
 			facing=velocity.getUnitVector();
-		}
-		this.translate(velocity);
-		/*if(length==0){
-				
-		}else if(length<=this.maxSpeed){
-			
+			standing=false;
 		}else{
-			this.translate(dir.scale(this.maxSpeed/length));
-		}*/
+			standing=true;
+		}
+		
+		this.translate(dir);
 	}
+	
+	
 	public int getX(){
 		return (int)this.pos.getX();
 	}
@@ -269,20 +261,37 @@ public class Actor implements Sprited, Observable{
 	}
 	@Override
 	public double getScale() {
-		return 5;
+		return 3;
 	}
-	private enum Direction{
-		NORTH,
-		NORTH_EAST,
-		EAST,
-		SOUTHEAST,
-		SOUTH,
-		SOUTHWEST,
-		WEST,
-		NORTH_WEST
-	}
-	public Direction getFacing(){
-		return Direction.NORTH;
+	public Direction getFacing(Set<Direction> avaliable){
+		Vector2D north = new Vector2D(0,-1);
+		double angle = Math.toDegrees(facing.getAngle(north));
+		if(facing.getX()<0){
+			angle= 360-angle;
+		}
+		if(avaliable.size()==4){
+			if(avaliable.contains(Direction.NORTH)){
+				switch((int)Math.round(angle/90)){
+				case 1: return Direction.EAST;
+				case 2:return Direction.SOUTH;
+				case 3:return Direction.WEST;
+				default:return Direction.NORTH;
+				
+				}
+			}else{
+				switch((int)Math.round((angle-45)/90)){
+				case 1:return Direction.SOUTH_EAST;
+				case 2:return Direction.SOUTH_WEST;
+				case 3:return Direction.NORTH_WEST;
+				default:return Direction.NORTH_EAST;
+				
+				}
+			}
+		}else if(avaliable.size()==8){
+			
+		}
+				
+		return Direction.SOUTH;
 	}
 
 }

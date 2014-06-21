@@ -1,12 +1,21 @@
 package Main;
 
+import interaction.Event;
+import interaction.LoadingEvent;
+import interaction.Observable;
+import interaction.Observer;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.TreeSet;
 
 import mathematics.Vector2D;
 import console.Console;
@@ -24,11 +33,11 @@ import ai.AI;
 import ai.Wanderer;
 import attacks.Attack;
 
-public class Game {
+public class Game implements Observable{
 	public static final Random rand=new Random();
+	private HashSet<Observer> observers =new HashSet<Observer>();
 	
-	
-	private Player player;
+	private Actor player;
 	
 	View view;
 	Shell shell;
@@ -52,29 +61,48 @@ public class Game {
 	public Game(Shell c, View v, ResourceLoader loader){
 		this.shell=c;
 		this.view=v;
+		this.loader=loader;
+	}
+	
+	public void initialize(){
+		
 		AI.setModel(this);
+		this.fireEvent(new LoadingEvent(100, "Creating world"));
+		
 		world=new World(loader);
 		rendered.add(world);
-		player=new Player(000, 000);
-		rendered.add(player);
-		actors.add(player);
+		
+		
 		AnimationLoader al=new AnimationLoader(loader);
 		try {
-			long time=System.currentTimeMillis();
-		for(int i=0;i<10;i++){
-			Actor zombie=new Actor(new Vector2D(rand.nextInt(500)-250,rand.nextInt(500)-250));
-			zombie.setSpeed(2.);
-			al.addAntimation(zombie, "ZombieSprite.txt");
+			this.fireEvent(new LoadingEvent(200, "Loading Player Sprite"));
+			al.addAntimation("PlayerSprite.txt");
+			this.fireEvent(new LoadingEvent(600, "Loading Zombie Sprite"));
+			al.addAntimation("ZombieSprite.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.fireEvent(new LoadingEvent(900, "Finalizing"));
+		player=new Player(000, 000,al.getAnimationList("PlayerSprite.txt"),16*3);
+		rendered.add(player);
+		actors.add(player);
+		//ais.add(new Wanderer(player));
+		
+			for(int i=0;i<10;i++){
+			Actor zombie=new Actor(new Vector2D(rand.nextInt(500)-250,rand.nextInt(500)-250), al.getAnimationList("ZombieSprite.txt"),16*3);
+			zombie.setSpeed(2);
 			ais.add(new Wanderer(zombie));
 			this.addActor(zombie);
-		}
-		System.out.println(System.currentTimeMillis()-time);
+
+		}/**/
+		//System.out.println(System.currentTimeMillis()-time);
+		/**/
 		
 		
 		
 		
-		
-			al.addAntimation(player, "PlayerSprite.txt");
+			
 			/*ImageResource ir=loader.LoadImageResource("basic sprites2.png");
 			ir.setTransparent(0, 0);
 			//player.addSprite(ir.createSprite(0, 0, 24, 34));
@@ -109,16 +137,17 @@ public class Game {
 			sprites[0] = ir.createSprite(24, 96, 24, 32,12,16);
 			player.addAnimation("downleftstanding", Arrays.asList(sprites), 500);
 			/**/
-		} catch (IOException e) {
+		/*} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
+		/**/
 		 
 		
 		new Thread(new loop(),"gameloop").start();
 	}
+	
 	
 	
 	
@@ -184,33 +213,44 @@ public class Game {
 				a.progress(time);
 			}
 		}
-		/*
-		 * for(Actor c:actors){
-				if(!(a==c))
-				a.collide(c);
-				for(Wall w:walls){
-					w.Collides(a);
-					w.Collides(c);
-				}
+		for(Iterator<Actor> itr=actors.iterator();itr.hasNext();){
+			Actor a1=itr.next();
+			for(Iterator<Actor> itr2=actors.iterator();itr2.hasNext();){
+				Actor a2=itr2.next();
+				if(a1!=a2)
+				a1.collide(a2);
 			}
-		 */
+		}
 		
-			for(Iterator<Attack> itr=attacks.iterator();itr.hasNext();){
-				Attack a=itr.next();
-				if(a.exists()){
-					a.progress(time);
-				}else{
-					itr.remove();
-				}
+		for(Iterator<Attack> itr=attacks.iterator();itr.hasNext();){
+			Attack a=itr.next();
+			if(a.exists()){
+				a.progress(time);
+			}else{
+				itr.remove();
 			}
+		}
 			
 	}
 	
 	private void render(){
 		synchronized(this){
-			this.rendered.addAll(newRendered);
-			this.newRendered.clear();
+			if(this.newRendered.size()!=0){
+				this.rendered.addAll(newRendered);
+				this.newRendered.clear();
+			}
 		}
+		Renderable map=this.rendered.getFirst();
+		this.rendered.removeFirst();
+		Collections.sort(this.rendered,new Comparator<Renderable>(){
+			public int compare(Renderable arg0, Renderable arg1) {
+				// TODO Auto-generated method stub
+				return arg0.getY()-arg1.getY();
+			}
+			
+		});
+		this.rendered.addFirst(map);
+		
 		view.render(rendered,player.getX(),player.getY());
 		view.display();
 	}
@@ -256,6 +296,30 @@ public class Game {
 			gameLoop();
 			
 		}
+		
+	}
+
+	
+	
+	private void fireEvent(Event e){
+		for(Observer o: observers){
+			o.event(e);
+		}
+	}
+	
+	
+	@Override
+	public void addObserver(Observer o) {
+		observers.add(o);
+		
+	}
+
+
+
+
+	@Override
+	public void removeObserver(Observer o) {
+		observers.remove(o);
 		
 	}
 }

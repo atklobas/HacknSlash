@@ -7,4 +7,4 @@ int int int int int int
 int int int int int int
 
 String
-int int int int int int
+int x, int y, int width, int height, int offsetX, int offsetY

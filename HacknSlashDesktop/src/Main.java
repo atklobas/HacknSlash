@@ -7,6 +7,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -16,6 +17,7 @@ import Console.dumpXML;
 import Console.loadImage;
 import Console.openEditor;
 import view.GamePanel;
+import view.LoadingWindow;
 import view.spriteEditor.SpriteEditorFrame;
 import console.Console;
 import console.ConsoleListener;
@@ -43,8 +45,10 @@ public class Main implements MouseListener, MouseMotionListener {
 	private static Shell s = new Shell();
 
 	public static void main(String[] args) {
+		
 		s.addCommand("editor", new openEditor());
 		new Main();
+		
 	}
 
 	private GamePanel panel;
@@ -53,23 +57,33 @@ public class Main implements MouseListener, MouseMotionListener {
 	private InputBinder binder = new InputBinder();
 
 	public Main() {
+		LoadingWindow w= new LoadingWindow();
+		
+		
+		
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panel = new GamePanel(width, height);
 		frame.add(panel);
 
-		frame.setVisible(true);
+		game = new Game(s, panel, new PC_ResourceLoader());
+		game.addObserver(w);
+		game.initialize();
+		pointer = new PointerLocation(0, 0);
 		frame.pack();
+		game.removeObserver(w);
+		w.dispose();
+		frame.setVisible(true);
+		
 
 		panel.requestFocus();
 		panel.addMouseListener(this);
 		panel.addMouseMotionListener(this);
 
-		pointer = new PointerLocation(0, 0);
+		
 		binder.bind(MouseEvent.BUTTON1, new Move(pointer));
 
-		game = new Game(s, panel, new PC_ResourceLoader());
-
+		
 	}
 	private void updatePointer(MouseEvent e){
 		pointer.changeLocation(e.getX()-width/2, e.getY()-height/2);

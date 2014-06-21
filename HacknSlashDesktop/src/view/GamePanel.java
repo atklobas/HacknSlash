@@ -95,22 +95,25 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 	}
 	
 	
+	//TODO add brafebuffer
+			/*for(InternalFrame f:frames){
+				if(image!=null){
+					
+				Graphics toSend=image.createGraphics();
+				toSend.translate(f.getX(), f.getY());
+				toSend.setClip(0, 0, f.getWidth(), f.getHeight());
+				f.paint(toSend);
+				}
+			}/**/
+	
 	
 	
 	public void paint(Graphics g){
 		this.requestFocus();
-		
-		//TODO add brafebuffer
-		/*for(InternalFrame f:frames){
-			if(image!=null){
-				
-			Graphics toSend=image.createGraphics();
-			toSend.translate(f.getX(), f.getY());
-			toSend.setClip(0, 0, f.getWidth(), f.getHeight());
-			f.paint(toSend);
-			}
-		}/**/
+
 		g.drawImage(image[(currentImage-1)%image.length], 0, 0, this);
+		
+		
 		g.drawImage(glassPane, 0, 0, this);
 		
 	}
@@ -118,6 +121,8 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 		this.requestFocus();
 		this.paint(g);
 	}
+	
+	
 	public VolatileImage createClearVolatileImage(int width, int height) {
 		VolatileImage ret= GraphicsEnvironment.getLocalGraphicsEnvironment().
 	        getDefaultScreenDevice().getDefaultConfiguration().
@@ -293,6 +298,7 @@ public class GamePanel extends Component implements View, MouseListener, MouseMo
 		
 		if(image[currentImage%image.length]==null){
 			image[currentImage%image.length]=this.createVolatileImage(width, height);
+			if(image[currentImage%image.length]==null) return;
 		}
 		
 		g=image[currentImage%image.length].createGraphics();
